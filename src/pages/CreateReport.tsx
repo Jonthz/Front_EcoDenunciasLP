@@ -1,10 +1,21 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Button as MuiButton, 
+  Card, 
+  CardContent, 
+  TextField, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel,
+  Grid,
+  InputAdornment,
+  CircularProgress,
+  Alert
+} from "@mui/material";
 import { useToast } from "@/components/ui/use-toast";
 import { MapPin, Upload, Send, AlertCircle } from "lucide-react";
 import CrimeTypeBadge from "@/components/ui/crime-type-badge";
@@ -108,244 +119,254 @@ const CreateReport = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4 max-w-2xl">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <AlertCircle className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-4">Crear Nueva Denuncia</h1>
-          <p className="text-muted-foreground">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="md" sx={{ px: 2 }}>
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+            <Box sx={{ 
+              p: 1.5, 
+              bgcolor: 'hsl(var(--primary) / 0.1)', 
+              borderRadius: '50%'
+            }}>
+              <AlertCircle style={{ width: 32, height: 32, color: 'hsl(var(--primary))' }} />
+            </Box>
+          </Box>
+          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+            Crear Nueva Denuncia
+          </Typography>
+          <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
             Comparte los detalles del delito ambiental que observaste. 
             Tu reporte ayudará a proteger nuestro medio ambiente.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Información de la Denuncia</CardTitle>
-            <CardDescription>
+        <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <CardContent sx={{ p: 3 }}>
+            <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: 'hsl(var(--foreground))' }}>
+              Información de la Denuncia
+            </Typography>
+            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', mb: 3 }}>
               Completa todos los campos para procesar tu denuncia correctamente.
-            </CardDescription>
-          </CardHeader>
-          
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
+            </Typography>
+            
+            <Box component="form" onSubmit={handleSubmit} sx={{ '& > *': { mb: 4 } }}>
               {/* Tipo de delito */}
-              <div className="space-y-2">
-                <Label htmlFor="categoria">Categoría de Denuncia Ambiental *</Label>
-                <Select value={form.categoria} onValueChange={(value) => setForm(prev => ({ ...prev, categoria: value }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Selecciona la categoría" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="contaminacion_agua">
-                      <div className="flex items-center space-x-2">
-                        <span>Contaminación de Agua</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="contaminacion_aire">
-                      <div className="flex items-center space-x-2">
-                        <span>Contaminación de Aire</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="deforestacion">
-                      <div className="flex items-center space-x-2">
-                        <span>Deforestación</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="manejo_residuos">
-                      <div className="flex items-center space-x-2">
-                        <span>Manejo de Residuos</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="ruido_excesivo">
-                      <div className="flex items-center space-x-2">
-                        <span>Ruido Excesivo</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="contaminacion_suelo">
-                      <div className="flex items-center space-x-2">
-                        <span>Contaminación de Suelo</span>
-                      </div>
-                    </SelectItem>
-                    <SelectItem value="otros">
-                      <div className="flex items-center space-x-2">
-                        <span>Otros</span>
-                      </div>
-                    </SelectItem>
-                  </SelectContent>
+              <FormControl fullWidth>
+                <InputLabel>Categoría de Denuncia Ambiental *</InputLabel>
+                <Select 
+                  value={form.categoria} 
+                  onChange={(e) => setForm(prev => ({ ...prev, categoria: e.target.value }))}
+                  label="Categoría de Denuncia Ambiental *"
+                >
+                  <MenuItem value="contaminacion_agua">Contaminación de Agua</MenuItem>
+                  <MenuItem value="contaminacion_aire">Contaminación de Aire</MenuItem>
+                  <MenuItem value="deforestacion">Deforestación</MenuItem>
+                  <MenuItem value="manejo_residuos">Manejo de Residuos</MenuItem>
+                  <MenuItem value="ruido_excesivo">Ruido Excesivo</MenuItem>
+                  <MenuItem value="contaminacion_suelo">Contaminación de Suelo</MenuItem>
+                  <MenuItem value="otros">Otros</MenuItem>
                 </Select>
                 
                 {form.categoria && (
-                  <div className="mt-2">
+                  <Box sx={{ mt: 1 }}>
                     <CrimeTypeBadge type={form.categoria as any} />
-                  </div>
+                  </Box>
                 )}
-              </div>
+              </FormControl>
 
               {/* Descripción */}
-              <div className="space-y-2">
-                <Label htmlFor="descripcion">Descripción del Incidente *</Label>
-                <Textarea
-                  id="descripcion"
-                  placeholder="Describe detalladamente lo que observaste: fecha, hora, personas involucradas, daños causados, etc."
-                  value={form.descripcion}
-                  onChange={(e) => setForm(prev => ({ ...prev, descripcion: e.target.value }))}
-                  rows={4}
-                  className="resize-none"
-                />
-              </div>
+              <TextField
+                fullWidth
+                multiline
+                rows={4}
+                label="Descripción del Incidente *"
+                placeholder="Describe detalladamente lo que observaste: fecha, hora, personas involucradas, daños causados, etc."
+                value={form.descripcion}
+                onChange={(e) => setForm(prev => ({ ...prev, descripcion: e.target.value }))}
+              />
 
               {/* Ubicación */}
-              <div className="space-y-2">
-                <Label htmlFor="ubicacion">Ubicación *</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="ubicacion"
-                    placeholder="Dirección o descripción del lugar"
-                    value={form.ubicacion}
-                    onChange={(e) => setForm(prev => ({ ...prev, ubicacion: e.target.value }))}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+              <TextField
+                fullWidth
+                label="Ubicación *"
+                placeholder="Dirección o descripción del lugar"
+                value={form.ubicacion}
+                onChange={(e) => setForm(prev => ({ ...prev, ubicacion: e.target.value }))}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <MapPin style={{ width: 16, height: 16, color: 'hsl(var(--muted-foreground))' }} />
+                    </InputAdornment>
+                  ),
+                }}
+              />
 
               {/* Coordenadas opcionales */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="latitud">Latitud (Opcional)</Label>
-                  <Input
-                    id="latitud"
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
                     type="number"
-                    step="any"
+                    label="Latitud (Opcional)"
                     placeholder="-2.1894"
                     value={form.latitud}
                     onChange={(e) => setForm(prev => ({ ...prev, latitud: e.target.value }))}
+                    inputProps={{ step: "any" }}
                   />
-                </div>
+                </Grid>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="longitud">Longitud (Opcional)</Label>
-                  <Input
-                    id="longitud"
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
                     type="number"
-                    step="any"
+                    label="Longitud (Opcional)"
                     placeholder="-79.8847"
                     value={form.longitud}
                     onChange={(e) => setForm(prev => ({ ...prev, longitud: e.target.value }))}
+                    inputProps={{ step: "any" }}
                   />
-                </div>
-              </div>
+                </Grid>
+              </Grid>
 
               {/* Imagen */}
-              <div className="space-y-2">
-                <Label htmlFor="imagen">Imagen de Evidencia (Opcional)</Label>
-                <div className="flex items-center space-x-4">
-                  <div className="flex-1">
-                    <Input
-                      id="imagen"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      className="cursor-pointer"
-                    />
-                  </div>
-                  <Upload className="h-5 w-5 text-muted-foreground" />
-                </div>
+              <Box>
+                <Typography variant="body2" sx={{ mb: 1, fontWeight: 500, color: 'hsl(var(--foreground))' }}>
+                  Imagen de Evidencia (Opcional)
+                </Typography>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                  <TextField
+                    fullWidth
+                    type="file"
+                    onChange={handleImageChange}
+                    inputProps={{ accept: "image/*" }}
+                    sx={{ '& input': { cursor: 'pointer' } }}
+                  />
+                  <Upload style={{ width: 20, height: 20, color: 'hsl(var(--muted-foreground))' }} />
+                </Box>
                 {form.imagen && (
-                  <p className="text-sm text-muted-foreground">
+                  <Typography variant="body2" sx={{ mt: 1, color: 'hsl(var(--muted-foreground))' }}>
                     Archivo seleccionado: {form.imagen.name}
-                  </p>
+                  </Typography>
                 )}
-              </div>
+              </Box>
 
               {/* Información del reportante (opcional) */}
-              <div className="space-y-4 pt-4 border-t">
-                <h4 className="font-medium text-sm text-muted-foreground">
+              <Box sx={{ pt: 4, mt: 2, borderTop: '1px solid hsl(var(--border))' }}>
+                <Typography variant="body2" sx={{ 
+                  fontWeight: 500, 
+                  fontSize: '0.875rem', 
+                  color: 'hsl(var(--muted-foreground))',
+                  mb: 2
+                }}>
                   Información de Contacto (Opcional)
-                </h4>
+                </Typography>
                 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="nombre_reportante">Nombre Completo</Label>
-                    <Input
-                      id="nombre_reportante"
+                <Grid container spacing={3} sx={{ mb: 3 }}>
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Nombre Completo"
                       placeholder="Tu nombre"
                       value={form.nombre_reportante}
                       onChange={(e) => setForm(prev => ({ ...prev, nombre_reportante: e.target.value }))}
                     />
-                  </div>
+                  </Grid>
                   
-                  <div className="space-y-2">
-                    <Label htmlFor="telefono_reportante">Teléfono</Label>
-                    <Input
-                      id="telefono_reportante"
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      fullWidth
+                      label="Teléfono"
                       placeholder="099999999"
                       value={form.telefono_reportante}
                       onChange={(e) => setForm(prev => ({ ...prev, telefono_reportante: e.target.value }))}
                     />
-                  </div>
-                </div>
+                  </Grid>
+                </Grid>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="email_reportante">Email</Label>
-                  <Input
-                    id="email_reportante"
-                    type="email"
-                    placeholder="correo@ejemplo.com"
-                    value={form.email_reportante}
-                    onChange={(e) => setForm(prev => ({ ...prev, email_reportante: e.target.value }))}
-                  />
-                </div>
-              </div>
+                <TextField
+                  fullWidth
+                  type="email"
+                  label="Email"
+                  placeholder="correo@ejemplo.com"
+                  value={form.email_reportante}
+                  onChange={(e) => setForm(prev => ({ ...prev, email_reportante: e.target.value }))}
+                />
+              </Box>
 
               {/* Submit Button */}
-              <div className="pt-4">
-                <Button 
+              <Box sx={{ pt: 4 }}>
+                <MuiButton 
                   type="submit" 
-                  className="w-full" 
+                  variant="contained"
+                  fullWidth
+                  size="large"
                   disabled={isSubmitting}
-                  size="lg"
+                  sx={{
+                    bgcolor: 'hsl(var(--primary))',
+                    color: 'hsl(var(--primary-foreground))',
+                    py: 1.5,
+                    '&:hover': {
+                      bgcolor: 'hsl(var(--primary) / 0.9)'
+                    },
+                    '&:disabled': {
+                      bgcolor: 'hsl(var(--muted))',
+                      color: 'hsl(var(--muted-foreground))'
+                    }
+                  }}
                 >
                   {isSubmitting ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <CircularProgress size={16} sx={{ color: 'inherit' }} />
                       <span>Enviando...</span>
-                    </div>
+                    </Box>
                   ) : (
-                    <div className="flex items-center space-x-2">
-                      <Send className="h-4 w-4" />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Send style={{ width: 16, height: 16 }} />
                       <span>Enviar Denuncia</span>
-                    </div>
+                    </Box>
                   )}
-                </Button>
-              </div>
-            </form>
+                </MuiButton>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
 
         {/* Información adicional */}
-        <Card className="mt-6 bg-muted/30">
-          <CardContent className="pt-6">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="h-5 w-5 text-primary mt-0.5" />
-              <div className="text-sm">
-                <p className="font-medium mb-1">Información importante:</p>
-                <ul className="space-y-1 text-muted-foreground">
+        <Card sx={{ 
+          mt: 3, 
+          bgcolor: 'hsl(var(--muted) / 0.3)',
+          borderColor: 'hsl(var(--border))'
+        }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 1.5 }}>
+              <AlertCircle style={{ 
+                width: 20, 
+                height: 20, 
+                color: 'hsl(var(--primary))', 
+                marginTop: 2, 
+                flexShrink: 0 
+              }} />
+              <Box sx={{ fontSize: '0.875rem' }}>
+                <Typography sx={{ fontWeight: 500, mb: 0.5, color: 'hsl(var(--foreground))' }}>
+                  Información importante:
+                </Typography>
+                <Box component="ul" sx={{ 
+                  listStyle: 'none', 
+                  p: 0, 
+                  m: 0,
+                  color: 'hsl(var(--muted-foreground))',
+                  '& li': { mb: 0.5 }
+                }}>
                   <li>• Tu denuncia será revisada por nuestro equipo en un plazo de 24-48 horas.</li>
                   <li>• Si la situación requiere atención inmediata, contacta también a las autoridades locales.</li>
                   <li>• Mantén la privacidad y seguridad al documentar el incidente.</li>
-                </ul>
-              </div>
-            </div>
+                </Box>
+              </Box>
+            </Box>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 };
 

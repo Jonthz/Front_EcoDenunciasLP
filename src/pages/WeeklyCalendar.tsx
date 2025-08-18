@@ -1,9 +1,16 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Card, 
+  CardContent, 
+  Button as MuiButton,
+  Chip,
+  Skeleton,
+  CardHeader
+} from "@mui/material";
 import { useToast } from "@/components/ui/use-toast";
 import { Calendar, ChevronLeft, ChevronRight, Clock, TrendingUp, BarChart3 } from "lucide-react";
 import StatusBadge from "@/components/ui/status-badge";
@@ -84,7 +91,7 @@ const WeeklyCalendar = () => {
       });
 
       diasSemana.push({
-        fecha: fechaStr,
+        fecha: fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
         dia_semana: nombresDias[i],
         denuncias: denunciasDia
       });
@@ -103,6 +110,11 @@ const WeeklyCalendar = () => {
   };
 
   const formatDate = (dateString: string) => {
+    // La fecha ya viene formateada desde organizarPorDias
+    return dateString;
+  };
+
+  const formatDateShort = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   };
@@ -113,181 +125,341 @@ const WeeklyCalendar = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-4">Calendario Semanal</h1>
-            <p className="text-muted-foreground">
+      <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+        <Container maxWidth="xl" sx={{ px: 2 }}>
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+              Calendario Semanal
+            </Typography>
+            <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
               Vista cronológica de las denuncias ambientales por día
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gap: 3,
+            mb: 4
+          }}>
             {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-8 w-16 mb-2" />
-                  <Skeleton className="h-4 w-20" />
+              <Card key={i} sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                <CardContent sx={{ textAlign: 'center', pt: 3 }}>
+                  <Skeleton variant="rectangular" width={64} height={32} sx={{ mb: 1, mx: 'auto' }} />
+                  <Skeleton variant="rectangular" width={80} height={16} sx={{ mx: 'auto' }} />
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </Box>
 
-          <div className="grid md:grid-cols-7 gap-4">
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(7, 1fr)' },
+            gap: 2
+          }}>
             {[...Array(7)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-4">
-                  <Skeleton className="h-6 w-20 mb-4" />
-                  <Skeleton className="h-16 w-full" />
+              <Card key={i} sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Skeleton variant="rectangular" width={80} height={24} sx={{ mb: 2 }} />
+                  <Skeleton variant="rectangular" width="100%" height={64} />
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="xl" sx={{ px: 2 }}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Calendar className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-4">Calendario Semanal de Denuncias</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+            <Box sx={{ 
+              p: 1.5, 
+              bgcolor: 'hsl(var(--primary) / 0.1)', 
+              borderRadius: '50%'
+            }}>
+              <Calendar style={{ width: 32, height: 32, color: 'hsl(var(--primary))' }} />
+            </Box>
+          </Box>
+          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+            Calendario Semanal de Denuncias
+          </Typography>
+          <Typography sx={{ 
+            color: 'hsl(var(--muted-foreground))', 
+            maxWidth: '42rem', 
+            mx: 'auto'
+          }}>
             Vista cronológica de las denuncias ambientales organizadas por día de la semana
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* Week Navigation */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm">
-              <ChevronLeft className="h-4 w-4 mr-2" />
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', mb: 4 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <MuiButton 
+              variant="outlined" 
+              size="small"
+              startIcon={<ChevronLeft style={{ width: 16, height: 16 }} />}
+              sx={{
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
               Semana Anterior
-            </Button>
-            <div className="text-center">
-              <h2 className="text-xl font-semibold">
+            </MuiButton>
+            
+            <Box sx={{ textAlign: 'center', px: 2 }}>
+              <Typography variant="h6" sx={{ fontWeight: 600, color: 'hsl(var(--foreground))' }}>
                 {data?.resumen.periodo || "Semana Actual"}
-              </h2>
-              <p className="text-sm text-muted-foreground">
+              </Typography>
+              <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
                 Visualización en formato calendario
-              </p>
-            </div>
-            <Button variant="outline" size="sm">
+              </Typography>
+            </Box>
+            
+            <MuiButton 
+              variant="outlined" 
+              size="small"
+              endIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
+              sx={{
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
               Semana Siguiente
-              <ChevronRight className="h-4 w-4 ml-2" />
-            </Button>
-          </div>
-        </div>
+            </MuiButton>
+          </Box>
+        </Box>
 
         {/* Statistics Cards */}
         {data && (
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-primary mb-2">
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' },
+            gap: 3,
+            mb: 4
+          }}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <CardContent sx={{ textAlign: 'center', pt: 3 }}>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 'bold', 
+                  color: 'hsl(var(--primary))', 
+                  mb: 1 
+                }}>
                   {data.resumen.total_denuncias}
-                </div>
-                <div className="text-sm text-muted-foreground">Total Denuncias</div>
-                <TrendingUp className="h-4 w-4 mx-auto mt-2 text-primary" />
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: 'hsl(var(--muted-foreground))', 
+                  mb: 1 
+                }}>
+                  Total Denuncias
+                </Typography>
+                <TrendingUp style={{ 
+                  width: 16, 
+                  height: 16, 
+                  color: 'hsl(var(--primary))', 
+                  margin: '0 auto' 
+                }} />
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-warning mb-2">
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <CardContent sx={{ textAlign: 'center', pt: 3 }}>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 'bold', 
+                  color: 'hsl(var(--warning))', 
+                  mb: 1 
+                }}>
                   {data.resumen.pendientes}
-                </div>
-                <div className="text-sm text-muted-foreground">Pendientes</div>
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}>
+                  Pendientes
+                </Typography>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-accent mb-2">
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <CardContent sx={{ textAlign: 'center', pt: 3 }}>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 'bold', 
+                  color: 'hsl(var(--accent))', 
+                  mb: 1 
+                }}>
                   {data.resumen.en_proceso}
-                </div>
-                <div className="text-sm text-muted-foreground">En Proceso</div>
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}>
+                  En Proceso
+                </Typography>
               </CardContent>
             </Card>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-success mb-2">
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <CardContent sx={{ textAlign: 'center', pt: 3 }}>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 'bold', 
+                  color: 'hsl(var(--success))', 
+                  mb: 1 
+                }}>
                   {data.resumen.resueltas}
-                </div>
-                <div className="text-sm text-muted-foreground">Resueltas</div>
+                </Typography>
+                <Typography variant="body2" sx={{ 
+                  color: 'hsl(var(--muted-foreground))' 
+                }}>
+                  Resueltas
+                </Typography>
               </CardContent>
             </Card>
-          </div>
+          </Box>
         )}
 
         {/* Weekly Calendar Grid */}
-        <div className="grid md:grid-cols-7 gap-4 mb-8">
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', sm: 'repeat(2, 1fr)', md: 'repeat(7, 1fr)' },
+          gap: 2,
+          mb: 4
+        }}>
           {diasCalendario.map((dia, index) => (
-            <Card key={index} className="h-auto min-h-[300px]">
-              <CardHeader className="pb-3">
-                <CardTitle className="text-lg flex items-center justify-between">
-                  <span>{dia.dia_semana}</span>
-                  <Badge variant="outline" className="text-xs">
-                    {dia.denuncias.length}
-                  </Badge>
-                </CardTitle>
-                <CardDescription className="text-sm">
-                  {formatDate(dia.fecha)}
-                </CardDescription>
+            <Card 
+              key={index} 
+              sx={{ 
+                height: 'auto', 
+                minHeight: 300,
+                bgcolor: 'hsl(var(--card))', 
+                borderColor: 'hsl(var(--border))' 
+              }}
+            >
+              <CardHeader sx={{ pb: 1.5 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <Box sx={{ flex: 1 }}>
+                    <Typography variant="h6" sx={{ 
+                      fontSize: '1rem',
+                      fontWeight: 'bold',
+                      color: 'black !important',
+                      backgroundColor: 'yellow !important',
+                      lineHeight: 1.2,
+                      padding: '4px'
+                    }}>
+                      {dia.dia_semana} {dia.fecha}
+                    </Typography>
+                  </Box>
+                  <Chip 
+                    variant="outlined" 
+                    size="small"
+                    label={dia.denuncias.length}
+                    sx={{ 
+                      fontSize: '0.75rem',
+                      height: 20,
+                      borderColor: 'hsl(var(--border))',
+                      color: 'hsl(var(--muted-foreground))'
+                    }}
+                  />
+                </Box>
               </CardHeader>
               
-              <CardContent className="space-y-3">
+              <CardContent sx={{ display: 'grid', gap: 1.5 }}>
                 {dia.denuncias.length === 0 ? (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <BarChart3 className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">Sin denuncias</p>
-                  </div>
+                  <Box sx={{ 
+                    textAlign: 'center', 
+                    py: 4, 
+                    color: 'hsl(var(--muted-foreground))' 
+                  }}>
+                    <BarChart3 style={{ 
+                      width: 32, 
+                      height: 32, 
+                      margin: '0 auto 8px', 
+                      opacity: 0.5 
+                    }} />
+                    <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                      Sin denuncias
+                    </Typography>
+                  </Box>
                 ) : (
                   dia.denuncias.map((denuncia) => (
                     <Link
                       key={denuncia.id}
                       to={`/denuncia/${denuncia.id}`}
-                      className="block"
+                      style={{ textDecoration: 'none' }}
                     >
-                      <Card className="hover:shadow-md transition-shadow cursor-pointer border-l-4 border-l-primary/20">
-                        <CardContent className="p-3 space-y-2">
-                          <div className="flex items-center justify-between">
+                      <Card sx={{ 
+                        transition: 'box-shadow 0.3s ease',
+                        cursor: 'pointer',
+                        borderLeft: '4px solid hsl(var(--primary) / 0.2)',
+                        bgcolor: 'hsl(var(--background))',
+                        borderColor: 'hsl(var(--border))',
+                        '&:hover': {
+                          boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)'
+                        }
+                      }}>
+                        <CardContent sx={{ p: 1.5, display: 'grid', gap: 1 }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <CrimeTypeBadge 
                               type={denuncia.tipo_problema as any} 
                               showIcon={false}
                               className="text-xs"
                             />
-                            <div className="flex items-center space-x-1 text-xs text-muted-foreground">
-                              <Clock className="h-3 w-3" />
-                              <span>{denuncia.fecha.split(' ')[1] || denuncia.fecha_relativa}</span>
-                            </div>
-                          </div>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                              <Clock style={{ width: 12, height: 12, color: 'hsl(var(--muted-foreground))' }} />
+                              <Typography variant="caption" sx={{ 
+                                color: 'hsl(var(--muted-foreground))',
+                                fontSize: '0.75rem'
+                              }}>
+                                {denuncia.fecha.split(' ')[1] || denuncia.fecha_relativa}
+                              </Typography>
+                            </Box>
+                          </Box>
                           
-                          <p className="text-sm font-medium leading-tight">
+                          <Typography variant="body2" sx={{ 
+                            fontWeight: 500,
+                            fontSize: '0.875rem',
+                            lineHeight: 1.3,
+                            color: 'hsl(var(--foreground))'
+                          }}>
                             {denuncia.descripcion_corta}
-                          </p>
+                          </Typography>
                           
-                          <div className="flex items-center justify-between">
+                          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                             <StatusBadge status={denuncia.estado as any} />
-                            <Badge 
-                              variant="outline" 
-                              className={`text-xs ${getPriorityColor(denuncia.prioridad)}`}
-                            >
-                              {denuncia.prioridad}
-                            </Badge>
-                          </div>
+                            <Chip 
+                              variant="outlined" 
+                              size="small"
+                              label={denuncia.prioridad}
+                              sx={{ 
+                                fontSize: '0.75rem',
+                                height: 20,
+                                color: denuncia.prioridad === 'alta' ? 'hsl(var(--destructive))' :
+                                       denuncia.prioridad === 'media' ? 'hsl(var(--warning))' :
+                                       'hsl(var(--muted-foreground))',
+                                borderColor: denuncia.prioridad === 'alta' ? 'hsl(var(--destructive))' :
+                                            denuncia.prioridad === 'media' ? 'hsl(var(--warning))' :
+                                            'hsl(var(--muted-foreground))'
+                              }}
+                            />
+                          </Box>
                           
-                          <div className="text-xs text-muted-foreground text-right">
+                          <Typography variant="caption" sx={{ 
+                            textAlign: 'right',
+                            color: 'hsl(var(--muted-foreground))',
+                            fontSize: '0.75rem'
+                          }}>
                             ID: #{denuncia.id.toString().padStart(4, '0')}
-                          </div>
+                          </Typography>
                         </CardContent>
                       </Card>
                     </Link>
@@ -296,29 +468,70 @@ const WeeklyCalendar = () => {
               </CardContent>
             </Card>
           ))}
-        </div>
+        </Box>
 
         {/* Quick Actions */}
-        <div className="flex justify-center space-x-4">
-          <Link to="/crear-denuncia">
-            <Button className="flex items-center space-x-2">
+        <Box sx={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          flexDirection: { xs: 'column', sm: 'row' },
+          gap: 2
+        }}>
+          <Link to="/crear-denuncia" style={{ textDecoration: 'none' }}>
+            <MuiButton 
+              variant="contained"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                bgcolor: 'hsl(var(--primary))',
+                color: 'hsl(var(--primary-foreground))',
+                '&:hover': { bgcolor: 'hsl(var(--primary) / 0.9)' }
+              }}
+            >
               <span>Nueva Denuncia</span>
-            </Button>
+            </MuiButton>
           </Link>
-          <Link to="/denuncias">
-            <Button variant="outline" className="flex items-center space-x-2">
+          <Link to="/denuncias" style={{ textDecoration: 'none' }}>
+            <MuiButton 
+              variant="outlined"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
               <span>Ver Todas las Denuncias</span>
-            </Button>
+            </MuiButton>
           </Link>
-          <Link to="/reportes">
-            <Button variant="outline" className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
+          <Link to="/reportes" style={{ textDecoration: 'none' }}>
+            <MuiButton 
+              variant="outlined"
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
+              <BarChart3 style={{ width: 16, height: 16 }} />
               <span>Ver Reportes</span>
-            </Button>
+            </MuiButton>
           </Link>
-        </div>
-      </div>
-    </div>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 

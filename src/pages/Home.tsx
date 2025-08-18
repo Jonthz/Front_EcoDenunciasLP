@@ -1,129 +1,335 @@
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Box, Container, Typography, Button as MuiButton, Card, CardContent, Grid } from "@mui/material";
 import { Leaf, Plus, List, Shield, Trees, Droplets, Mountain } from "lucide-react";
 
 const Home = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))' }}>
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-primary/10 via-nature/5 to-accent/10 py-20">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex justify-center mb-6">
-            <div className="p-4 bg-primary/10 rounded-full">
-              <Leaf className="h-16 w-16 text-primary" />
-            </div>
-          </div>
+      <Box sx={{ 
+        background: 'linear-gradient(to bottom right, hsl(var(--primary) / 0.1), hsl(var(--muted) / 0.05), hsl(var(--accent) / 0.1))',
+        py: { xs: 10, md: 20 }
+      }}>
+        <Container maxWidth="lg" sx={{ px: 2, textAlign: 'center' }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <Box sx={{ 
+              p: 2, 
+              bgcolor: 'hsl(var(--primary) / 0.1)', 
+              borderRadius: '50%'
+            }}>
+              <Leaf style={{ width: 64, height: 64, color: 'hsl(var(--primary))' }} />
+            </Box>
+          </Box>
           
-          <h1 className="text-4xl md:text-6xl font-bold mb-6 text-foreground">
-            Eco<span className="text-primary">Denuncia</span>
-          </h1>
+          <Typography 
+            variant="h1" 
+            sx={{ 
+              fontSize: { xs: '2.25rem', md: '3.75rem' },
+              fontWeight: 'bold',
+              mb: 3,
+              color: 'hsl(var(--foreground))'
+            }}
+          >
+            Eco<Box component="span" sx={{ color: 'hsl(var(--primary))' }}>Denuncia</Box>
+          </Typography>
           
-          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
+          <Typography 
+            variant="h5" 
+            sx={{
+              fontSize: { xs: '1.25rem', md: '1.5rem' },
+              color: 'hsl(var(--muted-foreground))',
+              mb: 4,
+              maxWidth: '48rem',
+              mx: 'auto'
+            }}
+          >
             Plataforma ciudadana para la denuncia y seguimiento de delitos ambientales. 
             Juntos protegemos nuestro medio ambiente.
-          </p>
+          </Typography>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/crear-denuncia">
-              <Button size="lg" className="flex items-center space-x-2 text-lg px-8 py-3">
-                <Plus className="h-5 w-5" />
-                <span>Crear Nueva Denuncia</span>
-              </Button>
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' }, 
+            gap: 2, 
+            justifyContent: 'center' 
+          }}>
+            <Link to="/crear-denuncia" style={{ textDecoration: 'none' }}>
+              <MuiButton 
+                variant="contained" 
+                size="large"
+                sx={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  fontSize: '1.125rem',
+                  px: 4,
+                  py: 1.5,
+                  bgcolor: 'hsl(var(--primary))',
+                  color: 'hsl(var(--primary-foreground))',
+                  '&:hover': {
+                    bgcolor: 'hsl(var(--primary) / 0.9)'
+                  }
+                }}
+                startIcon={<Plus style={{ width: 20, height: 20 }} />}
+              >
+                Crear Nueva Denuncia
+              </MuiButton>
             </Link>
             
-            <Link to="/denuncias">
-              <Button variant="outline" size="lg" className="flex items-center space-x-2 text-lg px-8 py-3">
-                <List className="h-5 w-5" />
-                <span>Ver Denuncias</span>
-              </Button>
+            <Link to="/denuncias" style={{ textDecoration: 'none' }}>
+              <MuiButton 
+                variant="outlined"
+                size="large"
+                sx={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                  fontSize: '1.125rem',
+                  px: 4,
+                  py: 1.5,
+                  borderColor: 'hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '&:hover': {
+                    bgcolor: 'hsl(var(--accent))',
+                    borderColor: 'hsl(var(--accent-foreground))'
+                  }
+                }}
+                startIcon={<List style={{ width: 20, height: 20 }} />}
+              >
+                Ver Denuncias
+              </MuiButton>
             </Link>
-          </div>
-        </div>
-      </section>
+          </Box>
+        </Container>
+      </Box>
 
       {/* Features Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">¿Qué puedes denunciar?</h2>
+      <Box sx={{ py: { xs: 10, md: 20 } }}>
+        <Container maxWidth="lg" sx={{ px: 2 }}>
+          <Typography 
+            variant="h2" 
+            sx={{ 
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              textAlign: 'center',
+              mb: 6,
+              color: 'hsl(var(--foreground))'
+            }}
+          >
+            ¿Qué puedes denunciar?
+          </Typography>
           
-          <div className="grid md:grid-cols-3 gap-8">
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-destructive/10 rounded-full">
-                    <Trees className="h-8 w-8 text-destructive" />
-                  </div>
-                </div>
-                <CardTitle className="text-destructive">Incendios Forestales</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
+          <Box sx={{ 
+            display: 'grid', 
+            gridTemplateColumns: { xs: '1fr', md: 'repeat(3, 1fr)' },
+            gap: 4
+          }}>
+            <Card sx={{ 
+              textAlign: 'center',
+              height: '100%',
+              transition: 'box-shadow 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+              },
+              bgcolor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    bgcolor: 'hsl(var(--destructive) / 0.1)', 
+                    borderRadius: '50%'
+                  }}>
+                    <Trees style={{ width: 32, height: 32, color: 'hsl(var(--destructive))' }} />
+                  </Box>
+                </Box>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    color: 'hsl(var(--destructive))',
+                    fontWeight: 'bold',
+                    mb: 2
+                  }}
+                >
+                  Incendios Forestales
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ color: 'hsl(var(--muted-foreground))' }}
+                >
                   Reporta incendios forestales intencionales o negligentes que amenacen nuestros bosques y ecosistemas.
-                </CardDescription>
+                </Typography>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-accent/10 rounded-full">
-                    <Droplets className="h-8 w-8 text-accent" />
-                  </div>
-                </div>
-                <CardTitle className="text-accent">Contaminación</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
+            <Card sx={{ 
+              textAlign: 'center',
+              height: '100%',
+              transition: 'box-shadow 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+              },
+              bgcolor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    bgcolor: 'hsl(var(--accent) / 0.1)', 
+                    borderRadius: '50%'
+                  }}>
+                    <Droplets style={{ width: 32, height: 32, color: 'hsl(var(--accent))' }} />
+                  </Box>
+                </Box>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    color: 'hsl(var(--accent))',
+                    fontWeight: 'bold',
+                    mb: 2
+                  }}
+                >
+                  Contaminación
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ color: 'hsl(var(--muted-foreground))' }}
+                >
                   Denuncia contaminación de aguas, suelos o aire que afecte el medio ambiente y la salud pública.
-                </CardDescription>
+                </Typography>
               </CardContent>
             </Card>
 
-            <Card className="text-center hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex justify-center mb-4">
-                  <div className="p-3 bg-earth/10 rounded-full">
-                    <Mountain className="h-8 w-8 text-earth" />
-                  </div>
-                </div>
-                <CardTitle className="text-earth">Minería Ilegal</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <CardDescription>
+            <Card sx={{ 
+              textAlign: 'center',
+              height: '100%',
+              transition: 'box-shadow 0.3s ease',
+              '&:hover': {
+                boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+              },
+              bgcolor: 'hsl(var(--card))',
+              borderColor: 'hsl(var(--border))'
+            }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', justifyContent: 'center', mb: 2 }}>
+                  <Box sx={{ 
+                    p: 1.5, 
+                    bgcolor: 'hsl(var(--muted) / 0.2)', 
+                    borderRadius: '50%'
+                  }}>
+                    <Mountain style={{ width: 32, height: 32, color: 'hsl(var(--muted-foreground))' }} />
+                  </Box>
+                </Box>
+                <Typography 
+                  variant="h6" 
+                  sx={{ 
+                    color: 'hsl(var(--muted-foreground))',
+                    fontWeight: 'bold',
+                    mb: 2
+                  }}
+                >
+                  Minería Ilegal
+                </Typography>
+                <Typography 
+                  variant="body2" 
+                  sx={{ color: 'hsl(var(--muted-foreground))' }}
+                >
                   Reporta actividades mineras ilegales que dañen el paisaje y contaminen fuentes de agua.
-                </CardDescription>
+                </Typography>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </section>
+          </Box>
+        </Container>
+      </Box>
 
       {/* Call to Action */}
-      <section className="bg-primary/5 py-16">
-        <div className="container mx-auto px-4 text-center">
-          <Shield className="h-12 w-12 text-primary mx-auto mb-6" />
-          <h2 className="text-3xl font-bold mb-4">Tu voz cuenta</h2>
-          <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+      <Box sx={{ 
+        bgcolor: 'hsl(var(--primary) / 0.05)', 
+        py: { xs: 8, md: 16 } 
+      }}>
+        <Container maxWidth="lg" sx={{ px: 2, textAlign: 'center' }}>
+          <Shield 
+            style={{ 
+              width: 48, 
+              height: 48, 
+              color: 'hsl(var(--primary))', 
+              margin: '0 auto 24px'
+            }} 
+          />
+          <Typography 
+            variant="h2" 
+            sx={{ 
+              fontSize: '1.875rem',
+              fontWeight: 'bold',
+              mb: 2,
+              color: 'hsl(var(--foreground))'
+            }}
+          >
+            Tu voz cuenta
+          </Typography>
+          <Typography 
+            variant="h6" 
+            sx={{ 
+              fontSize: '1.125rem',
+              color: 'hsl(var(--muted-foreground))',
+              mb: 4,
+              maxWidth: '42rem',
+              mx: 'auto'
+            }}
+          >
             Cada denuncia es un paso hacia la protección de nuestro medio ambiente. 
             Únete a la comunidad de ciudadanos comprometidos con el planeta.
-          </p>
+          </Typography>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/crear-denuncia">
-              <Button size="lg" className="text-lg px-8 py-3">
+          <Box sx={{ 
+            display: 'flex', 
+            flexDirection: { xs: 'column', sm: 'row' }, 
+            gap: 2, 
+            justifyContent: 'center' 
+          }}>
+            <Link to="/crear-denuncia" style={{ textDecoration: 'none' }}>
+              <MuiButton 
+                variant="contained"
+                size="large"
+                sx={{ 
+                  fontSize: '1.125rem',
+                  px: 4,
+                  py: 1.5,
+                  bgcolor: 'hsl(var(--primary))',
+                  color: 'hsl(var(--primary-foreground))',
+                  '&:hover': {
+                    bgcolor: 'hsl(var(--primary) / 0.9)'
+                  }
+                }}
+              >
                 Hacer una Denuncia Ahora
-              </Button>
+              </MuiButton>
             </Link>
-            <Link to="/calendario-semanal">
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+            <Link to="/calendario-semanal" style={{ textDecoration: 'none' }}>
+              <MuiButton 
+                variant="outlined"
+                size="large"
+                sx={{ 
+                  fontSize: '1.125rem',
+                  px: 4,
+                  py: 1.5,
+                  borderColor: 'hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '&:hover': {
+                    bgcolor: 'hsl(var(--accent))',
+                    borderColor: 'hsl(var(--accent-foreground))'
+                  }
+                }}
+              >
                 Ver Calendario Semanal
-              </Button>
+              </MuiButton>
             </Link>
-          </div>
-        </div>
-      </section>
-    </div>
+          </Box>
+        </Container>
+      </Box>
+    </Box>
   );
 };
 

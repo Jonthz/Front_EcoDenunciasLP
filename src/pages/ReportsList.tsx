@@ -1,12 +1,24 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Card, 
+  CardContent, 
+  TextField, 
+  Select, 
+  MenuItem, 
+  FormControl, 
+  InputLabel, 
+  Button as MuiButton,
+  Chip,
+  Grid,
+  InputAdornment,
+  Skeleton,
+  CircularProgress
+} from "@mui/material";
 import { Search, Filter, Calendar, MapPin, Eye } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/components/ui/use-toast";
 import StatusBadge from "@/components/ui/status-badge";
 import CrimeTypeBadge from "@/components/ui/crime-type-badge";
@@ -75,224 +87,347 @@ const ReportsList = () => {
   }) || [];
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="lg" sx={{ px: 2 }}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Catálogo de Denuncias</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+            Catálogo de Denuncias
+          </Typography>
+          <Typography sx={{ 
+            color: 'hsl(var(--muted-foreground))', 
+            maxWidth: '42rem', 
+            mx: 'auto',
+            mb: 1
+          }}>
             Explora todas las denuncias ambientales reportadas por la comunidad. 
             Utiliza los filtros para encontrar información específica.
-          </p>
+          </Typography>
           {data && (
-            <p className="text-sm text-muted-foreground mt-2">
+            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
               Mostrando denuncias de los últimos 7 días
-            </p>
+            </Typography>
           )}
-        </div>
+        </Box>
 
         {/* Filters */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Filtros de Búsqueda</span>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-4">
+        <Card sx={{ mb: 4, bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+              <Filter style={{ width: 20, height: 20 }} />
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'hsl(var(--foreground))' }}>
+                Filtros de Búsqueda
+              </Typography>
+            </Box>
+            
+            <Grid container spacing={3} sx={{ mb: 3 }}>
               {/* Search */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Buscar</label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Buscar en descripción o ubicación..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+              <Grid item xs={12} md={4}>
+                <TextField
+                  fullWidth
+                  label="Buscar"
+                  placeholder="Buscar en descripción o ubicación..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <Search style={{ width: 16, height: 16, color: 'hsl(var(--muted-foreground))' }} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              </Grid>
 
               {/* Type Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Tipo de Delito</label>
-                <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos los tipos</SelectItem>
-                    <SelectItem value="contaminacion_agua">Contaminación de Agua</SelectItem>
-                    <SelectItem value="contaminacion_aire">Contaminación de Aire</SelectItem>
-                    <SelectItem value="deforestacion">Deforestación</SelectItem>
-                    <SelectItem value="manejo_residuos">Manejo de Residuos</SelectItem>
-                    <SelectItem value="ruido_excesivo">Ruido Excesivo</SelectItem>
-                    <SelectItem value="contaminacion_suelo">Contaminación de Suelo</SelectItem>
-                    <SelectItem value="otros">Otros</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Tipo de Delito</InputLabel>
+                  <Select 
+                    value={filterType} 
+                    onChange={(e) => setFilterType(e.target.value)}
+                    label="Tipo de Delito"
+                  >
+                    <MenuItem value="all">Todos los tipos</MenuItem>
+                    <MenuItem value="contaminacion_agua">Contaminación de Agua</MenuItem>
+                    <MenuItem value="contaminacion_aire">Contaminación de Aire</MenuItem>
+                    <MenuItem value="deforestacion">Deforestación</MenuItem>
+                    <MenuItem value="manejo_residuos">Manejo de Residuos</MenuItem>
+                    <MenuItem value="ruido_excesivo">Ruido Excesivo</MenuItem>
+                    <MenuItem value="contaminacion_suelo">Contaminación de Suelo</MenuItem>
+                    <MenuItem value="otros">Otros</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
               {/* Status Filter */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Estado</label>
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todos los estados</SelectItem>
-                    <SelectItem value="pendiente">Pendiente</SelectItem>
-                    <SelectItem value="en_proceso">En Proceso</SelectItem>
-                    <SelectItem value="resuelta">Resuelta</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+              <Grid item xs={12} md={4}>
+                <FormControl fullWidth>
+                  <InputLabel>Estado</InputLabel>
+                  <Select 
+                    value={filterStatus} 
+                    onChange={(e) => setFilterStatus(e.target.value)}
+                    label="Estado"
+                  >
+                    <MenuItem value="all">Todos los estados</MenuItem>
+                    <MenuItem value="pendiente">Pendiente</MenuItem>
+                    <MenuItem value="en_proceso">En Proceso</MenuItem>
+                    <MenuItem value="resuelta">Resuelta</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
+            </Grid>
             
-            <div className="mt-4">
-              <Button onClick={applyFilters} className="mr-2">
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <MuiButton 
+                variant="contained"
+                onClick={applyFilters}
+                sx={{
+                  bgcolor: 'hsl(var(--primary))',
+                  color: 'hsl(var(--primary-foreground))',
+                  '&:hover': { bgcolor: 'hsl(var(--primary) / 0.9)' }
+                }}
+              >
                 Aplicar Filtros
-              </Button>
-              <Button 
-                variant="outline" 
+              </MuiButton>
+              <MuiButton 
+                variant="outlined"
                 onClick={() => {
                   setSearchTerm("");
                   setFilterType("all");
                   setFilterStatus("all");
                   setTimeout(() => fetchData(), 100);
                 }}
+                sx={{
+                  borderColor: 'hsl(var(--border))',
+                  color: 'hsl(var(--foreground))',
+                  '&:hover': {
+                    bgcolor: 'hsl(var(--accent))',
+                    borderColor: 'hsl(var(--accent-foreground))'
+                  }
+                }}
               >
                 Limpiar
-              </Button>
-            </div>
+              </MuiButton>
+            </Box>
           </CardContent>
         </Card>
 
         {/* Results Count */}
-        <div className="mb-6">
-          <p className="text-muted-foreground">
+        <Box sx={{ mb: 3 }}>
+          <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
             {loading ? 'Cargando...' : `Mostrando ${filteredReports.length} denuncias`}
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
         {/* Reports Grid */}
-        <div className="grid gap-6">
+        <Box sx={{ display: 'grid', gap: 3 }}>
           {loading ? (
             // Loading skeleton
             [...Array(3)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <div className="space-y-4">
-                    <div className="flex space-x-2">
-                      <Skeleton className="h-6 w-24" />
-                      <Skeleton className="h-6 w-20" />
-                    </div>
-                    <Skeleton className="h-6 w-3/4" />
-                    <Skeleton className="h-16 w-full" />
-                    <div className="flex justify-between">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-16" />
-                    </div>
-                  </div>
+              <Card key={i} sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'grid', gap: 2 }}>
+                    <Box sx={{ display: 'flex', gap: 1 }}>
+                      <Skeleton variant="rectangular" width={96} height={24} />
+                      <Skeleton variant="rectangular" width={80} height={24} />
+                    </Box>
+                    <Skeleton variant="rectangular" width="75%" height={24} />
+                    <Skeleton variant="rectangular" width="100%" height={64} />
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <Skeleton variant="rectangular" width={128} height={16} />
+                      <Skeleton variant="rectangular" width={64} height={16} />
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             ))
           ) : filteredReports.length === 0 ? (
-            <Card className="text-center py-12">
+            <Card sx={{ 
+              textAlign: 'center', 
+              py: 6, 
+              bgcolor: 'hsl(var(--card))', 
+              borderColor: 'hsl(var(--border))' 
+            }}>
               <CardContent>
-                <div className="text-muted-foreground">
-                  <Search className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg mb-2">No se encontraron denuncias</p>
-                  <p>Intenta ajustar los filtros de búsqueda</p>
-                </div>
+                <Box sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                  <Search style={{ 
+                    width: 48, 
+                    height: 48, 
+                    margin: '0 auto 16px', 
+                    opacity: 0.5 
+                  }} />
+                  <Typography variant="h6" sx={{ mb: 1, color: 'inherit' }}>
+                    No se encontraron denuncias
+                  </Typography>
+                  <Typography sx={{ color: 'inherit' }}>
+                    Intenta ajustar los filtros de búsqueda
+                  </Typography>
+                </Box>
               </CardContent>
             </Card>
           ) : (
             filteredReports.map((report: DenunciaResumen) => (
-              <Card key={report.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center space-x-2 flex-wrap gap-2">
+              <Card 
+                key={report.id} 
+                sx={{ 
+                  bgcolor: 'hsl(var(--card))', 
+                  borderColor: 'hsl(var(--border))',
+                  transition: 'box-shadow 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                  }
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+                    <Box sx={{ display: 'grid', gap: 1, flex: 1, mr: 2 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                         <CrimeTypeBadge type={report.tipo_problema as any} />
                         <StatusBadge status={report.estado as any} />
                         {report.prioridad && (
-                          <Badge 
-                            variant="outline"
-                            className={`text-xs ${
-                              report.prioridad === 'alta' ? 'text-destructive' :
-                              report.prioridad === 'media' ? 'text-warning' :
-                              'text-muted-foreground'
-                            }`}
-                          >
-                            Prioridad {report.prioridad}
-                          </Badge>
+                          <Chip 
+                            variant="outlined"
+                            size="small"
+                            label={`Prioridad ${report.prioridad}`}
+                            sx={{
+                              fontSize: '0.75rem',
+                              height: 24,
+                              color: report.prioridad === 'alta' ? 'hsl(var(--destructive))' :
+                                     report.prioridad === 'media' ? 'hsl(var(--warning))' :
+                                     'hsl(var(--muted-foreground))',
+                              borderColor: report.prioridad === 'alta' ? 'hsl(var(--destructive))' :
+                                          report.prioridad === 'media' ? 'hsl(var(--warning))' :
+                                          'hsl(var(--muted-foreground))'
+                            }}
+                          />
                         )}
-                      </div>
-                      <CardTitle className="text-xl">{report.descripcion_corta}</CardTitle>
-                    </div>
+                      </Box>
+                      <Typography variant="h6" sx={{ 
+                        fontSize: '1.25rem', 
+                        fontWeight: 'bold',
+                        color: 'hsl(var(--foreground))'
+                      }}>
+                        {report.descripcion_corta}
+                      </Typography>
+                    </Box>
                     
-                    <Link to={`/denuncia/${report.id}`}>
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-2" />
+                    <Link to={`/denuncia/${report.id}`} style={{ textDecoration: 'none' }}>
+                      <MuiButton 
+                        variant="outlined" 
+                        size="small"
+                        startIcon={<Eye style={{ width: 16, height: 16 }} />}
+                        sx={{
+                          borderColor: 'hsl(var(--border))',
+                          color: 'hsl(var(--foreground))',
+                          '&:hover': {
+                            bgcolor: 'hsl(var(--accent))',
+                            borderColor: 'hsl(var(--accent-foreground))'
+                          }
+                        }}
+                      >
                         Ver Detalles
-                      </Button>
+                      </MuiButton>
                     </Link>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <CardDescription className="text-base mb-4">
-                    {report.descripcion_completa}
-                  </CardDescription>
+                  </Box>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
-                      <span>{report.ubicacion}</span>
-                    </div>
+                  <Typography variant="body1" sx={{ 
+                    color: 'hsl(var(--muted-foreground))', 
+                    mb: 2,
+                    fontSize: '1rem'
+                  }}>
+                    {report.descripcion_completa}
+                  </Typography>
+                  
+                  <Box sx={{ display: 'grid', gap: 1.5 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <MapPin style={{ 
+                        width: 16, 
+                        height: 16, 
+                        color: 'hsl(var(--muted-foreground))' 
+                      }} />
+                      <Typography variant="body2" sx={{ 
+                        color: 'hsl(var(--muted-foreground))',
+                        fontSize: '0.875rem'
+                      }}>
+                        {report.ubicacion}
+                      </Typography>
+                    </Box>
                     
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <Calendar className="h-4 w-4" />
-                      <span>{report.fecha} ({report.fecha_relativa})</span>
-                    </div>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Calendar style={{ 
+                        width: 16, 
+                        height: 16, 
+                        color: 'hsl(var(--muted-foreground))' 
+                      }} />
+                      <Typography variant="body2" sx={{ 
+                        color: 'hsl(var(--muted-foreground))',
+                        fontSize: '0.875rem'
+                      }}>
+                        {report.fecha} ({report.fecha_relativa})
+                      </Typography>
+                    </Box>
                     
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center space-x-2">
+                    <Box sx={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      justifyContent: 'space-between', 
+                      pt: 1 
+                    }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {report.imagen && (
-                          <Badge variant="outline" className="text-xs">
-                            📷 Con evidencia
-                          </Badge>
+                          <Chip 
+                            variant="outlined" 
+                            size="small"
+                            label="📷 Con evidencia"
+                            sx={{ 
+                              fontSize: '0.75rem',
+                              height: 24,
+                              borderColor: 'hsl(var(--border))',
+                              color: 'hsl(var(--muted-foreground))'
+                            }}
+                          />
                         )}
-                        <Badge variant="outline" className="text-xs">
-                          {report.dias_transcurridos} días transcurridos
-                        </Badge>
-                      </div>
+                        <Chip 
+                          variant="outlined" 
+                          size="small"
+                          label={`${report.dias_transcurridos} días transcurridos`}
+                          sx={{ 
+                            fontSize: '0.75rem',
+                            height: 24,
+                            borderColor: 'hsl(var(--border))',
+                            color: 'hsl(var(--muted-foreground))'
+                          }}
+                        />
+                      </Box>
                       
-                      <span className="text-xs text-muted-foreground">
+                      <Typography variant="caption" sx={{ 
+                        color: 'hsl(var(--muted-foreground))',
+                        fontSize: '0.75rem'
+                      }}>
                         ID: #{report.id.toString().padStart(4, '0')}
-                      </span>
-                    </div>
-                  </div>
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             ))
           )}
-        </div>
+        </Box>
 
         {/* Results summary */}
         {!loading && filteredReports.length > 0 && (
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground text-sm">
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ 
+              color: 'hsl(var(--muted-foreground))',
+              fontSize: '0.875rem'
+            }}>
               Mostrando {filteredReports.length} denuncias de los últimos 7 días
-            </p>
-          </div>
+            </Typography>
+          </Box>
         )}
-      </div>
-    </div>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,12 +1,20 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { 
+  Box, 
+  Container, 
+  Typography, 
+  Card, 
+  CardContent, 
+  Button as MuiButton,
+  TextField,
+  Skeleton,
+  Grid,
+  CircularProgress,
+  Divider
+} from "@mui/material";
 import { useToast } from "@/components/ui/use-toast";
 import { ArrowLeft, MapPin, Calendar, MessageSquare, Send, User, Image as ImageIcon, History } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import CrimeTypeBadge from "@/components/ui/crime-type-badge";
 import StatusBadge from "@/components/ui/status-badge";
 import { 
@@ -164,291 +172,441 @@ const ReportDetails = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="mb-6">
-            <Button variant="outline" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+        <Container maxWidth="lg" sx={{ px: 2 }}>
+          <Box sx={{ mb: 3 }}>
+            <MuiButton 
+              variant="outlined" 
+              onClick={() => navigate(-1)}
+              startIcon={<ArrowLeft style={{ width: 16, height: 16 }} />}
+              sx={{
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
               Volver
-            </Button>
-          </div>
+            </MuiButton>
+          </Box>
 
-          <div className="space-y-6">
-            <Card>
-              <CardContent className="p-6">
-                <Skeleton className="h-8 w-3/4 mb-4" />
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-2/3" />
+          <Box sx={{ display: 'grid', gap: 3 }}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Skeleton variant="rectangular" width="75%" height={32} sx={{ mb: 2 }} />
+                <Skeleton variant="rectangular" width="100%" height={16} sx={{ mb: 1 }} />
+                <Skeleton variant="rectangular" width="66%" height={16} />
               </CardContent>
             </Card>
 
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card>
-                <CardContent className="p-6">
-                  <Skeleton className="h-6 w-1/2 mb-4" />
-                  <Skeleton className="h-24" />
-                </CardContent>
-              </Card>
+            <Grid container spacing={3}>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Skeleton variant="rectangular" width="50%" height={24} sx={{ mb: 2 }} />
+                    <Skeleton variant="rectangular" width="100%" height={96} />
+                  </CardContent>
+                </Card>
+              </Grid>
               
-              <Card>
-                <CardContent className="p-6">
-                  <Skeleton className="h-6 w-1/2 mb-4" />
-                  <Skeleton className="h-24" />
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        </div>
-      </div>
+              <Grid item xs={12} md={6}>
+                <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                  <CardContent sx={{ p: 3 }}>
+                    <Skeleton variant="rectangular" width="50%" height={24} sx={{ mb: 2 }} />
+                    <Skeleton variant="rectangular" width="100%" height={96} />
+                  </CardContent>
+                </Card>
+              </Grid>
+            </Grid>
+          </Box>
+        </Container>
+      </Box>
     );
   }
 
   if (!denuncia) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <div className="mb-6">
-            <Button variant="outline" onClick={() => navigate(-1)}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
+      <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+        <Container maxWidth="lg" sx={{ px: 2 }}>
+          <Box sx={{ mb: 3 }}>
+            <MuiButton 
+              variant="outlined" 
+              onClick={() => navigate(-1)}
+              startIcon={<ArrowLeft style={{ width: 16, height: 16 }} />}
+              sx={{
+                borderColor: 'hsl(var(--border))',
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                  borderColor: 'hsl(var(--accent-foreground))'
+                }
+              }}
+            >
               Volver
-            </Button>
-          </div>
+            </MuiButton>
+          </Box>
 
-          <Card className="text-center py-12">
+          <Card sx={{ 
+            textAlign: 'center', 
+            py: 6, 
+            bgcolor: 'hsl(var(--card))', 
+            borderColor: 'hsl(var(--border))' 
+          }}>
             <CardContent>
-              <p className="text-lg text-muted-foreground">Denuncia no encontrada</p>
+              <Typography variant="h6" sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                Denuncia no encontrada
+              </Typography>
             </CardContent>
           </Card>
-        </div>
-      </div>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="lg" sx={{ px: 2 }}>
         {/* Navigation */}
-        <div className="mb-6">
-          <Button variant="outline" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
+        <Box sx={{ mb: 3 }}>
+          <MuiButton 
+            variant="outlined" 
+            onClick={() => navigate(-1)}
+            startIcon={<ArrowLeft style={{ width: 16, height: 16 }} />}
+            sx={{
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))',
+              '&:hover': {
+                bgcolor: 'hsl(var(--accent))',
+                borderColor: 'hsl(var(--accent-foreground))'
+              }
+            }}
+          >
             Volver
-          </Button>
-        </div>
+          </MuiButton>
+        </Box>
 
         {/* Report Details */}
-        <Card className="mb-6">
-          <CardHeader>
-            <div className="flex items-start justify-between">
-              <div className="space-y-3 flex-1">
-                <div className="flex items-center space-x-2 flex-wrap gap-2">
+        <Card sx={{ mb: 3, bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 3 }}>
+              <Box sx={{ display: 'grid', gap: 1.5, flex: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
                   <CrimeTypeBadge type={denuncia.tipo_problema as any} />
                   <StatusBadge status={denuncia.estado as any} />
-                </div>
-                <CardTitle className="text-2xl">
+                </Box>
+                <Typography variant="h4" sx={{ 
+                  fontWeight: 'bold',
+                  color: 'hsl(var(--foreground))'
+                }}>
                   Denuncia #{denuncia.id.toString().padStart(4, '0')}
-                </CardTitle>
-              </div>
-            </div>
-          </CardHeader>
-          
-          <CardContent className="space-y-6">
-            <div>
-              <h4 className="font-medium mb-2">Descripción</h4>
-              <p className="text-muted-foreground">{denuncia.descripcion}</p>
-            </div>
+                </Typography>
+              </Box>
+            </Box>
             
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2 text-sm">
-                  <MapPin className="h-4 w-4 text-muted-foreground" />
-                  <span>{denuncia.ubicacion_direccion}</span>
-                </div>
-                
-                <div className="flex items-center space-x-2 text-sm">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span>
-                    Reportado el {new Date(denuncia.fecha_creacion).toLocaleDateString('es-ES')}
-                    {denuncia.dias_transcurridos > 0 && (
-                      <span className="text-muted-foreground ml-2">
-                        (hace {denuncia.dias_transcurridos} días)
-                      </span>
-                    )}
-                  </span>
-                </div>
-                
-                <div className="flex items-center space-x-2 text-sm">
-                  <MessageSquare className="h-4 w-4 text-muted-foreground" />
-                  <span>{denuncia.total_comentarios} comentarios</span>
-                </div>
-              </div>
+            <Box sx={{ display: 'grid', gap: 3 }}>
+              <Box>
+                <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                  Descripción
+                </Typography>
+                <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                  {denuncia.descripcion}
+                </Typography>
+              </Box>
               
-              {(denuncia.ubicacion_lat && denuncia.ubicacion_lng) && (
-                <div>
-                  <h4 className="font-medium mb-2">Coordenadas</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Lat: {denuncia.ubicacion_lat}, Lng: {denuncia.ubicacion_lng}
-                  </p>
-                </div>
-              )}
-            </div>
+              <Grid container spacing={3}>
+                <Grid item xs={12} md={6}>
+                  <Box sx={{ display: 'grid', gap: 2 }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <MapPin style={{ width: 16, height: 16, color: 'hsl(var(--muted-foreground))' }} />
+                      <Typography variant="body2">
+                        {denuncia.ubicacion_direccion}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Calendar style={{ width: 16, height: 16, color: 'hsl(var(--muted-foreground))' }} />
+                      <Typography variant="body2">
+                        Reportado el {new Date(denuncia.fecha_creacion).toLocaleDateString('es-ES')}
+                        {denuncia.dias_transcurridos > 0 && (
+                          <Box component="span" sx={{ color: 'hsl(var(--muted-foreground))', ml: 1 }}>
+                            (hace {denuncia.dias_transcurridos} días)
+                          </Box>
+                        )}
+                      </Typography>
+                    </Box>
+                    
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <MessageSquare style={{ width: 16, height: 16, color: 'hsl(var(--muted-foreground))' }} />
+                      <Typography variant="body2">
+                        {denuncia.total_comentarios} comentarios
+                      </Typography>
+                    </Box>
+                  </Box>
+                </Grid>
+                
+                {(denuncia.ubicacion_lat && denuncia.ubicacion_lng) && (
+                  <Grid item xs={12} md={6}>
+                    <Box>
+                      <Typography variant="h6" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                        Coordenadas
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                        Lat: {denuncia.ubicacion_lat}, Lng: {denuncia.ubicacion_lng}
+                      </Typography>
+                    </Box>
+                  </Grid>
+                )}
+              </Grid>
 
-            {denuncia.imagen_url && (
-              <div>
-                <h4 className="font-medium mb-2 flex items-center space-x-2">
-                  <ImageIcon className="h-4 w-4" />
-                  <span>Evidencia fotográfica</span>
-                </h4>
-                <div className="border rounded-lg p-2 inline-block">
-                  <img 
-                    src={denuncia.imagen_url} 
-                    alt="Evidencia de la denuncia"
-                    className="max-w-sm max-h-64 object-cover rounded"
-                  />
-                </div>
-              </div>
-            )}
+              {denuncia.imagen_url && (
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                    <ImageIcon style={{ width: 16, height: 16 }} />
+                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'hsl(var(--foreground))' }}>
+                      Evidencia fotográfica
+                    </Typography>
+                  </Box>
+                  <Box sx={{ 
+                    border: '1px solid hsl(var(--border))', 
+                    borderRadius: 2, 
+                    p: 1, 
+                    display: 'inline-block' 
+                  }}>
+                    <Box
+                      component="img"
+                      src={denuncia.imagen_url}
+                      alt="Evidencia de la denuncia"
+                      sx={{
+                        maxWidth: 384,
+                        maxHeight: 256,
+                        objectFit: 'cover',
+                        borderRadius: 1
+                      }}
+                    />
+                  </Box>
+                </Box>
+              )}
+            </Box>
           </CardContent>
         </Card>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <Box sx={{ 
+          display: 'grid', 
+          gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' },
+          gap: 3
+        }}>
           {/* Comments Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <MessageSquare className="h-5 w-5" />
-                <span>Comentarios</span>
-              </CardTitle>
-              <CardDescription>
-                {comentarios?.estadisticas.total_comentarios || 0} comentarios
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent className="space-y-6">
-              {/* Comments List */}
-              {loadingComentarios ? (
-                <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="space-y-2">
-                      <Skeleton className="h-4 w-1/3" />
-                      <Skeleton className="h-12" />
-                    </div>
-                  ))}
-                </div>
-              ) : comentarios && comentarios.comentarios.length > 0 ? (
-                <div className="space-y-4">
-                  {comentarios.comentarios.map((comentario: Comentario) => (
-                    <div key={comentario.id} className="border-l-2 border-primary/20 pl-4 space-y-2">
-                      <div className="flex items-center space-x-2 text-sm">
-                        <User className="h-3 w-3" />
-                        <span className="font-medium">{comentario.nombre_usuario}</span>
-                        <span className="text-muted-foreground">•</span>
-                        <span className="text-muted-foreground">{comentario.tiempo_transcurrido}</span>
-                      </div>
-                      <p className="text-sm">{comentario.comentario}</p>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-6">
-                  No hay comentarios aún. ¡Sé el primero en comentar!
-                </p>
-              )}
-
-              {/* Comment Form */}
-              <form onSubmit={handleSubmitComment} className="space-y-4 border-t pt-4">
-                <h4 className="font-medium">Agregar comentario</h4>
+          <Box>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', height: 'fit-content' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <MessageSquare style={{ width: 20, height: 20 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'hsl(var(--foreground))' }}>
+                    Comentarios
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', mb: 3 }}>
+                  {comentarios?.estadisticas.total_comentarios || 0} comentarios
+                </Typography>
                 
-                <div>
-                  <Input
-                    placeholder="Tu nombre"
-                    value={newComment.nombre_usuario}
-                    onChange={(e) => setNewComment(prev => ({ ...prev, nombre_usuario: e.target.value }))}
-                    required
-                  />
-                </div>
-                
-                <div>
-                  <Textarea
-                    placeholder="Escribe tu comentario..."
-                    value={newComment.comentario}
-                    onChange={(e) => setNewComment(prev => ({ ...prev, comentario: e.target.value }))}
-                    rows={3}
-                    required
-                  />
-                </div>
-                
-                <Button type="submit" disabled={submittingComment} className="w-full">
-                  {submittingComment ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Enviando...</span>
-                    </div>
+                <Box sx={{ display: 'grid', gap: 3 }}>
+                  {/* Comments List */}
+                  {loadingComentarios ? (
+                    <Box sx={{ display: 'grid', gap: 2 }}>
+                      {[...Array(3)].map((_, i) => (
+                        <Box key={i} sx={{ display: 'grid', gap: 1 }}>
+                          <Skeleton variant="rectangular" width="33%" height={16} />
+                          <Skeleton variant="rectangular" width="100%" height={48} />
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : comentarios && comentarios.comentarios.length > 0 ? (
+                    <Box sx={{ display: 'grid', gap: 2 }}>
+                      {comentarios.comentarios.map((comentario: Comentario) => (
+                        <Box 
+                          key={comentario.id} 
+                          sx={{ 
+                            borderLeft: '2px solid hsl(var(--primary) / 0.2)', 
+                            pl: 2, 
+                            display: 'grid', 
+                            gap: 1 
+                          }}
+                        >
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <User style={{ width: 12, height: 12 }} />
+                            <Typography variant="body2" sx={{ fontWeight: 500, fontSize: '0.875rem' }}>
+                              {comentario.nombre_usuario}
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.875rem' }}>
+                              •
+                            </Typography>
+                            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', fontSize: '0.875rem' }}>
+                              {comentario.tiempo_transcurrido}
+                            </Typography>
+                          </Box>
+                          <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                            {comentario.comentario}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
                   ) : (
-                    <div className="flex items-center space-x-2">
-                      <Send className="h-4 w-4" />
-                      <span>Enviar comentario</span>
-                    </div>
+                    <Typography sx={{ 
+                      textAlign: 'center', 
+                      color: 'hsl(var(--muted-foreground))', 
+                      py: 3
+                    }}>
+                      No hay comentarios aún. ¡Sé el primero en comentar!
+                    </Typography>
                   )}
-                </Button>
-              </form>
-            </CardContent>
-          </Card>
+
+                  
+                  {/* Comment Form */}
+                  <Box 
+                    component="form" 
+                    onSubmit={handleSubmitComment} 
+                    sx={{ 
+                      display: 'grid', 
+                      gap: 2, 
+                      borderTop: '1px solid hsl(var(--border))', 
+                      pt: 2 
+                    }}
+                  >
+                    <Typography variant="h6" sx={{ fontWeight: 500, color: 'hsl(var(--foreground))' }}>
+                      Agregar comentario
+                    </Typography>
+                    
+                    <TextField
+                      fullWidth
+                      placeholder="Tu nombre"
+                      value={newComment.nombre_usuario}
+                      onChange={(e) => setNewComment(prev => ({ ...prev, nombre_usuario: e.target.value }))}
+                      required
+                      size="small"
+                    />
+                    
+                    <TextField
+                      fullWidth
+                      multiline
+                      rows={3}
+                      placeholder="Escribe tu comentario..."
+                      value={newComment.comentario}
+                      onChange={(e) => setNewComment(prev => ({ ...prev, comentario: e.target.value }))}
+                      required
+                    />
+                    
+                    <MuiButton 
+                      type="submit" 
+                      variant="contained"
+                      fullWidth
+                      disabled={submittingComment}
+                      sx={{
+                        bgcolor: 'hsl(var(--primary))',
+                        color: 'hsl(var(--primary-foreground))',
+                        '&:hover': { bgcolor: 'hsl(var(--primary) / 0.9)' },
+                        '&:disabled': {
+                          bgcolor: 'hsl(var(--muted))',
+                          color: 'hsl(var(--muted-foreground))'
+                        }
+                      }}
+                    >
+                      {submittingComment ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <CircularProgress size={16} sx={{ color: 'inherit' }} />
+                          <span>Enviando...</span>
+                        </Box>
+                      ) : (
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Send style={{ width: 16, height: 16 }} />
+                          <span>Enviar comentario</span>
+                        </Box>
+                      )}
+                    </MuiButton>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Box>
 
           {/* History Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <History className="h-5 w-5" />
-                <span>Historial de cambios</span>
-              </CardTitle>
-              <CardDescription>
-                Seguimiento de los cambios de estado
-              </CardDescription>
-            </CardHeader>
-            
-            <CardContent>
-              {loadingHistorial ? (
-                <div className="space-y-4">
-                  {[...Array(3)].map((_, i) => (
-                    <div key={i} className="space-y-2">
-                      <Skeleton className="h-4 w-1/2" />
-                      <Skeleton className="h-8" />
-                    </div>
-                  ))}
-                </div>
-              ) : historial.length > 0 ? (
-                <div className="space-y-4">
-                  {historial.map((entry, index) => (
-                    <div key={index} className="border-l-2 border-primary/20 pl-4 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <StatusBadge status={entry.estado as any} />
-                        <span className="text-xs text-muted-foreground">
-                          {new Date(entry.fecha).toLocaleDateString('es-ES')}
-                        </span>
-                      </div>
-                      
-                      <div className="text-sm space-y-1">
-                        <p className="text-muted-foreground">
-                          Por: <span className="font-medium">{entry.usuario}</span>
-                        </p>
+          <Box>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', height: 'fit-content' }}>
+              <CardContent sx={{ p: 3 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+                  <History style={{ width: 20, height: 20 }} />
+                  <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'hsl(var(--foreground))' }}>
+                    Historial de cambios
+                  </Typography>
+                </Box>
+                <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', mb: 3 }}>
+                  Seguimiento de los cambios de estado
+                </Typography>
+                
+                {loadingHistorial ? (
+                  <Box sx={{ display: 'grid', gap: 2 }}>
+                    {[...Array(3)].map((_, i) => (
+                      <Box key={i} sx={{ display: 'grid', gap: 1 }}>
+                        <Skeleton variant="rectangular" width="50%" height={16} />
+                        <Skeleton variant="rectangular" width="100%" height={32} />
+                      </Box>
+                    ))}
+                  </Box>
+                ) : historial.length > 0 ? (
+                  <Box sx={{ display: 'grid', gap: 2 }}>
+                    {historial.map((entry, index) => (
+                      <Box 
+                        key={index} 
+                        sx={{ 
+                          borderLeft: '2px solid hsl(var(--primary) / 0.2)', 
+                          pl: 2, 
+                          display: 'grid', 
+                          gap: 1 
+                        }}
+                      >
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <StatusBadge status={entry.estado as any} />
+                          <Typography variant="caption" sx={{ 
+                            color: 'hsl(var(--muted-foreground))',
+                            fontSize: '0.75rem'
+                          }}>
+                            {new Date(entry.fecha).toLocaleDateString('es-ES')}
+                          </Typography>
+                        </Box>
                         
-                        {entry.notas && (
-                          <p className="text-sm">{entry.notas}</p>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-center text-muted-foreground py-6">
-                  No hay historial de cambios disponible
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+                        <Box sx={{ display: 'grid', gap: 0.5 }}>
+                          <Typography variant="body2" sx={{ 
+                            color: 'hsl(var(--muted-foreground))',
+                            fontSize: '0.875rem'
+                          }}>
+                            Por: <Box component="span" sx={{ fontWeight: 500 }}>{entry.usuario}</Box>
+                          </Typography>
+                          
+                          {entry.notas && (
+                            <Typography variant="body2" sx={{ fontSize: '0.875rem' }}>
+                              {entry.notas}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Box>
+                    ))}
+                  </Box>
+                ) : (
+                  <Typography sx={{ 
+                    textAlign: 'center', 
+                    color: 'hsl(var(--muted-foreground))', 
+                    py: 3
+                  }}>
+                    No hay historial de cambios disponible
+                  </Typography>
+                )}
+              </CardContent>
+            </Card>
+          </Box>
+        </Box>
+      </Container>
+    </Box>
   );
 };
 
