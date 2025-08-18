@@ -112,7 +112,7 @@ src/
 - **`/`** - Página de inicio
 - **`/crear-denuncia`** - Formulario de nueva denuncia
 - **`/denuncias`** - Lista de todas las denuncias
-- **`/dashboard`** - Dashboard con resumen semanal
+- **`/dashboard`** - Dashboard con resumen semanal (en evaluación de permanencia por ser muy similar a /denuncias)
 - **`/denuncia/:id`** - Detalles de denuncia específica
 - **`/reportes`** - Reportes y análisis estadísticos
 - **`/admin`** - Panel de administración
@@ -260,4 +260,3 @@ Serán consumidos en la entrega final, por ahora usamos mock data.
 
 Proyecto EcoDenuncia - Plataforma de Denuncias Ambientales
 
-Enlace del Proyecto: [proyecto](https://github.com/username/eco-guardia-web)
