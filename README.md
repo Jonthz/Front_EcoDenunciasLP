@@ -321,4 +321,3 @@ Todas las funcionalidades especificadas en el prompt inicial han sido implementa
 
 Proyecto EcoDenuncia - Plataforma de Denuncias Ambientales
 
-Enlace del Proyecto: [https://github.com/username/eco-guardia-web](https://github.com/username/eco-guardia-web)
