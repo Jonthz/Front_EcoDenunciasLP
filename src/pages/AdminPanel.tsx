@@ -1,14 +1,24 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import {
+  Box,
+  Container,
+  Typography,
+  Button as MuiButton,
+  Card,
+  CardContent,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
+  Chip,
+  Divider,
+  CircularProgress,
+  Skeleton
+} from "@mui/material";
 import { useToast } from "@/components/ui/use-toast";
 import { Shield, Calendar, MapPin, MessageSquare, Save, Eye, User, History } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
 import StatusBadge from "@/components/ui/status-badge";
 import CrimeTypeBadge from "@/components/ui/crime-type-badge";
 import { 
@@ -136,322 +146,397 @@ const AdminPanel = () => {
 
   const selectedReportData = data?.denuncias.find(r => r.id === selectedReport);
 
-  const getPriorityColor = (priority: string) => {
-    switch (priority) {
-      case "alta": return "text-destructive";
-      case "media": return "text-warning";
-      case "baja": return "text-muted-foreground";
-      default: return "text-muted-foreground";
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4, lg: 6 } }}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="p-3 bg-primary/10 rounded-full">
-              <Shield className="h-8 w-8 text-primary" />
-            </div>
-          </div>
-          <h1 className="text-3xl font-bold mb-4">Panel de Administración</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+        <Box sx={{ textAlign: 'center', mb: 6 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'center', mb: 3 }}>
+            <Box sx={{ 
+              p: 2, 
+              bgcolor: 'hsl(var(--primary) / 0.1)', 
+              borderRadius: '50%'
+            }}>
+              <Shield style={{ width: 40, height: 40, color: 'hsl(var(--primary))' }} />
+            </Box>
+          </Box>
+          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 3, color: 'hsl(var(--foreground))' }}>
+            Panel de Administración
+          </Typography>
+          <Typography variant="h6" sx={{ color: 'hsl(var(--muted-foreground))', maxWidth: '56rem', mx: 'auto', lineHeight: 1.6 }}>
             Gestiona y actualiza el estado de las denuncias ambientales reportadas por la comunidad.
-          </p>
-        </div>
+          </Typography>
+        </Box>
 
-        <div className="grid lg:grid-cols-2 gap-8">
+        <Grid container spacing={{ xs: 3, md: 4, lg: 6 }} sx={{ justifyContent: 'center' }}>
           {/* Lista de Denuncias */}
-          <div>
-            <Card>
-              <CardHeader>
-                <CardTitle>Denuncias para Gestión</CardTitle>
-                <CardDescription>
+          <Grid xs={12} lg={6} xl={5}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', height: 'fit-content' }}>
+              <CardContent sx={{ p: { xs: 2, md: 3, lg: 4 } }}>
+                <Typography variant="h5" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+                  Denuncias para Gestión
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', mb: 4 }}>
                   Selecciona una denuncia para revisar y actualizar su estado
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {loading ? (
-                  [...Array(5)].map((_, i) => (
-                    <div key={i} className="p-4 border rounded-lg">
-                      <div className="space-y-3">
-                        <div className="flex items-center space-x-2">
-                          <Skeleton className="h-6 w-24" />
-                          <Skeleton className="h-6 w-20" />
-                        </div>
-                        <Skeleton className="h-5 w-3/4" />
-                        <Skeleton className="h-4 w-1/2" />
-                      </div>
-                    </div>
-                  ))
-                ) : data?.denuncias.map((report: DenunciaResumen) => (
-                  <div
-                    key={report.id}
-                    className={`p-4 border rounded-lg cursor-pointer transition-colors hover:bg-muted/50 ${
-                      selectedReport === report.id ? 'border-primary bg-primary/5' : 'border-border'
-                    }`}
-                    onClick={() => handleSelectReport(report.id)}
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <CrimeTypeBadge type={report.tipo_problema as any} />
-                          <StatusBadge status={report.estado as any} />
-                        </div>
-                        <Badge 
-                          variant="outline" 
-                          className={getPriorityColor(report.prioridad)}
-                        >
-                          Prioridad {report.prioridad}
-                        </Badge>
-                      </div>
-                      
-                      <h3 className="font-semibold">{report.descripcion_corta}</h3>
-                      
-                      <div className="text-sm text-muted-foreground space-y-1">
-                        <div className="flex items-center space-x-2">
-                          <Calendar className="h-3 w-3" />
-                          <span>{report.fecha} ({report.fecha_relativa})</span>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <MapPin className="h-3 w-3" />
-                          <span className="truncate">{report.ubicacion}</span>
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
-                          {report.dias_transcurridos} días transcurridos
-                        </span>
-                        <span className="text-xs text-muted-foreground">
-                          ID: #{report.id.toString().padStart(4, '0')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
+                </Typography>
+                <Box sx={{ '& > *': { mb: 2 } }}>
+                  {loading ? (
+                    [...Array(5)].map((_, i) => (
+                      <Card key={i} sx={{ p: 2, border: '1px solid hsl(var(--border))' }}>
+                        <Box sx={{ '& > *': { mb: 1.5 } }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Skeleton width={96} height={24} />
+                            <Skeleton width={80} height={24} />
+                          </Box>
+                          <Skeleton width="75%" height={20} />
+                          <Skeleton width="50%" height={16} />
+                        </Box>
+                      </Card>
+                    ))
+                  ) : data?.denuncias.map((report: DenunciaResumen) => (
+                    <Card
+                      key={report.id}
+                      sx={{
+                        p: 2,
+                        border: selectedReport === report.id ? '2px solid hsl(var(--primary))' : '1px solid hsl(var(--border))',
+                        bgcolor: selectedReport === report.id ? 'hsl(var(--primary) / 0.05)' : 'transparent',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        '&:hover': {
+                          bgcolor: 'hsl(var(--muted) / 0.5)'
+                        }
+                      }}
+                      onClick={() => handleSelectReport(report.id)}
+                    >
+                      <Box sx={{ '& > *': { mb: 1.5 } }}>
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <CrimeTypeBadge type={report.tipo_problema as any} />
+                            <StatusBadge status={report.estado as any} />
+                          </Box>
+                          <Chip 
+                            label={`Prioridad ${report.prioridad}`}
+                            size="small"
+                            variant="outlined"
+                            sx={{ 
+                              color: report.prioridad === 'alta' ? 'hsl(var(--destructive))' : 
+                                     report.prioridad === 'media' ? 'hsl(var(--warning))' : 
+                                     'hsl(var(--muted-foreground))',
+                              borderColor: report.prioridad === 'alta' ? 'hsl(var(--destructive))' : 
+                                          report.prioridad === 'media' ? 'hsl(var(--warning))' : 
+                                          'hsl(var(--muted-foreground))'
+                            }}
+                          />
+                        </Box>
+                        
+                        <Typography variant="body1" sx={{ fontWeight: 600, color: 'hsl(var(--foreground))' }}>
+                          {report.descripcion_corta}
+                        </Typography>
+                        
+                        <Box sx={{ fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))', '& > *': { mb: 0.5 } }}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <Calendar style={{ width: 12, height: 12 }} />
+                            <span>{report.fecha} ({report.fecha_relativa})</span>
+                          </Box>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            <MapPin style={{ width: 12, height: 12 }} />
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>{report.ubicacion}</span>
+                          </Box>
+                        </Box>
+                        
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '0.75rem', color: 'hsl(var(--muted-foreground))' }}>
+                          <span>
+                            {report.dias_transcurridos} días transcurridos
+                          </span>
+                          <span>
+                            ID: #{report.id.toString().padStart(4, '0')}
+                          </span>
+                        </Box>
+                      </Box>
+                    </Card>
+                  ))}
+                </Box>
               </CardContent>
             </Card>
-          </div>
+          </Grid>
 
           {/* Panel de Detalles */}
-          <div>
+          <Grid xs={12} lg={6} xl={7}>
             {selectedReportData ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Eye className="h-5 w-5" />
-                    <span>Detalles de la Denuncia</span>
-                  </CardTitle>
-                  <CardDescription>
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', height: 'fit-content' }}>
+                <CardContent sx={{ p: { xs: 2, md: 3, lg: 4 } }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 2 }}>
+                    <Eye style={{ width: 24, height: 24 }} />
+                    <Typography variant="h5" sx={{ fontWeight: 'bold', color: 'hsl(var(--foreground))' }}>
+                      Detalles de la Denuncia
+                    </Typography>
+                  </Box>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', mb: 4 }}>
                     ID: #{selectedReportData.id.toString().padStart(4, '0')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
+                  </Typography>
+                  
                   {/* Información básica */}
-                  <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2">Descripción Corta</h4>
-                      <p className="text-sm">{selectedReportData.descripcion_corta}</p>
-                    </div>
+                  <Box sx={{ '& > *': { mb: 2 } }}>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                        Descripción Corta
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'hsl(var(--foreground))' }}>
+                        {selectedReportData.descripcion_corta}
+                      </Typography>
+                    </Box>
                     
-                    <div>
-                      <h4 className="font-medium mb-2">Descripción Completa</h4>
-                      <p className="text-sm text-muted-foreground">{selectedReportData.descripcion_completa}</p>
-                    </div>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                        Descripción Completa
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                        {selectedReportData.descripcion_completa}
+                      </Typography>
+                    </Box>
                     
-                    <div>
-                      <h4 className="font-medium mb-2">Ubicación</h4>
-                      <p className="text-sm text-muted-foreground">{selectedReportData.ubicacion}</p>
-                    </div>
+                    <Box>
+                      <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                        Ubicación
+                      </Typography>
+                      <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                        {selectedReportData.ubicacion}
+                      </Typography>
+                    </Box>
 
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div>
-                        <h4 className="font-medium mb-2">Tipo</h4>
+                    <Grid container spacing={2}>
+                      <Grid xs={12} md={6}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                          Tipo
+                        </Typography>
                         <CrimeTypeBadge type={selectedReportData.tipo_problema as any} />
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Estado Actual</h4>
+                      </Grid>
+                      <Grid xs={12} md={6}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                          Estado Actual
+                        </Typography>
                         <StatusBadge status={selectedReportData.estado as any} />
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Prioridad</h4>
-                        <Badge className={getPriorityColor(selectedReportData.prioridad)}>
-                          {selectedReportData.prioridad}
-                        </Badge>
-                      </div>
-                      <div>
-                        <h4 className="font-medium mb-2">Fecha</h4>
-                        <p className="text-sm text-muted-foreground">
+                      </Grid>
+                      <Grid xs={12} md={6}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                          Prioridad
+                        </Typography>
+                        <Chip
+                          label={selectedReportData.prioridad}
+                          size="small"
+                          sx={{
+                            color: selectedReportData.prioridad === 'alta' ? 'hsl(var(--destructive))' :
+                                   selectedReportData.prioridad === 'media' ? 'hsl(var(--warning))' :
+                                   'hsl(var(--muted-foreground))',
+                            bgcolor: selectedReportData.prioridad === 'alta' ? 'hsl(var(--destructive) / 0.1)' :
+                                     selectedReportData.prioridad === 'media' ? 'hsl(var(--warning) / 0.1)' :
+                                     'hsl(var(--muted) / 0.3)'
+                          }}
+                        />
+                      </Grid>
+                      <Grid xs={12} md={6}>
+                        <Typography variant="body2" sx={{ fontWeight: 500, mb: 1, color: 'hsl(var(--foreground))' }}>
+                          Fecha
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
                           {selectedReportData.fecha}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Box>
 
                   {/* Actualizar Estado */}
-                  <div className="space-y-4 pt-4 border-t">
-                    <h4 className="font-medium flex items-center space-x-2">
-                      <MessageSquare className="h-4 w-4" />
-                      <span>Gestión Administrativa</span>
-                    </h4>
+                  <Box sx={{ pt: 2, mt: 2 }}>
+                    <Divider sx={{ mb: 2 }} />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                      <MessageSquare style={{ width: 16, height: 16 }} />
+                      <Typography variant="body2" sx={{ fontWeight: 500, color: 'hsl(var(--foreground))' }}>
+                        Gestión Administrativa
+                      </Typography>
+                    </Box>
                     
-                    <div className="space-y-3">
-                      <div>
-                        <Label htmlFor="newStatus" className="text-sm font-medium mb-2 block">
-                          Cambiar Estado
-                        </Label>
-                        <Select value={newStatus} onValueChange={(value: 'pendiente' | 'en_proceso' | 'resuelta') => setNewStatus(value)}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="pendiente">Pendiente</SelectItem>
-                            <SelectItem value="en_proceso">En Proceso</SelectItem>
-                            <SelectItem value="resuelta">Resuelta</SelectItem>
-                          </SelectContent>
+                    <Box sx={{ '& > *': { mb: 2 } }}>
+                      <FormControl fullWidth size="small">
+                        <InputLabel>Cambiar Estado</InputLabel>
+                        <Select
+                          value={newStatus}
+                          onChange={(e) => setNewStatus(e.target.value as 'pendiente' | 'en_proceso' | 'resuelta')}
+                          label="Cambiar Estado"
+                        >
+                          <MenuItem value="pendiente">Pendiente</MenuItem>
+                          <MenuItem value="en_proceso">En Proceso</MenuItem>
+                          <MenuItem value="resuelta">Resuelta</MenuItem>
                         </Select>
-                      </div>
+                      </FormControl>
                       
-                      <div>
-                        <Label htmlFor="usuarioResponsable" className="text-sm font-medium mb-2 block">
-                          Usuario Responsable
-                        </Label>
-                        <Input
-                          id="usuarioResponsable"
-                          placeholder="Nombre del operador o responsable"
-                          value={usuarioResponsable}
-                          onChange={(e) => setUsuarioResponsable(e.target.value)}
-                        />
-                      </div>
+                      <TextField
+                        fullWidth
+                        size="small"
+                        label="Usuario Responsable"
+                        placeholder="Nombre del operador o responsable"
+                        value={usuarioResponsable}
+                        onChange={(e) => setUsuarioResponsable(e.target.value)}
+                      />
                       
-                      <div>
-                        <Label htmlFor="adminNotes" className="text-sm font-medium mb-2 block">
-                          Notas Administrativas
-                        </Label>
-                        <Textarea
-                          id="adminNotes"
-                          placeholder="Agrega comentarios sobre el estado de la investigación, acciones tomadas, etc."
-                          value={adminNotes}
-                          onChange={(e) => setAdminNotes(e.target.value)}
-                          rows={4}
-                        />
-                      </div>
-                    </div>
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        size="small"
+                        label="Notas Administrativas"
+                        placeholder="Agrega comentarios sobre el estado de la investigación, acciones tomadas, etc."
+                        value={adminNotes}
+                        onChange={(e) => setAdminNotes(e.target.value)}
+                      />
+                    </Box>
                     
-                    <Button 
+                    <MuiButton
                       onClick={handleUpdateReport}
                       disabled={updating}
-                      className="w-full"
-                      size="lg"
+                      variant="contained"
+                      fullWidth
+                      size="large"
+                      sx={{
+                        bgcolor: 'hsl(var(--primary))',
+                        color: 'hsl(var(--primary-foreground))',
+                        py: 1.5,
+                        '&:hover': {
+                          bgcolor: 'hsl(var(--primary) / 0.9)'
+                        },
+                        '&:disabled': {
+                          bgcolor: 'hsl(var(--muted))',
+                          color: 'hsl(var(--muted-foreground))'
+                        }
+                      }}
                     >
                       {updating ? (
-                        <>
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-2"></div>
-                          Actualizando...
-                        </>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <CircularProgress size={16} sx={{ color: 'inherit' }} />
+                          <span>Actualizando...</span>
+                        </Box>
                       ) : (
-                        <>
-                          <Save className="h-4 w-4 mr-2" />
-                          Guardar Cambios
-                        </>
+                        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                          <Save style={{ width: 16, height: 16 }} />
+                          <span>Guardar Cambios</span>
+                        </Box>
                       )}
-                    </Button>
+                    </MuiButton>
 
                     {/* Historial section */}
-                    <div className="pt-4 border-t">
-                      <h4 className="font-medium flex items-center space-x-2 mb-3">
-                        <History className="h-4 w-4" />
-                        <span>Historial de Cambios</span>
-                      </h4>
+                    <Box sx={{ pt: 2, mt: 2 }}>
+                      <Divider sx={{ mb: 2 }} />
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+                        <History style={{ width: 16, height: 16 }} />
+                        <Typography variant="body2" sx={{ fontWeight: 500, color: 'hsl(var(--foreground))' }}>
+                          Historial de Cambios
+                        </Typography>
+                      </Box>
                       
                       {loadingHistorial ? (
-                        <div className="space-y-2">
+                        <Box sx={{ '& > *': { mb: 1 } }}>
                           {[...Array(3)].map((_, i) => (
-                            <Skeleton key={i} className="h-16" />
+                            <Skeleton key={i} height={64} />
                           ))}
-                        </div>
+                        </Box>
                       ) : historial.length > 0 ? (
-                        <div className="space-y-3 max-h-48 overflow-y-auto">
+                        <Box sx={{ maxHeight: 200, overflowY: 'auto', '& > *': { mb: 1.5 } }}>
                           {historial.map((entry, index) => (
-                            <div key={index} className="border-l-2 border-primary/20 pl-3 space-y-1">
-                              <div className="flex items-center justify-between">
+                            <Box key={index} sx={{ borderLeft: '2px solid hsl(var(--primary) / 0.2)', pl: 1.5, '& > *': { mb: 0.5 } }}>
+                              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <StatusBadge status={entry.estado as any} />
-                                <span className="text-xs text-muted-foreground">
+                                <Typography variant="caption" sx={{ color: 'hsl(var(--muted-foreground))' }}>
                                   {new Date(entry.fecha).toLocaleDateString('es-ES')}
-                                </span>
-                              </div>
+                                </Typography>
+                              </Box>
                               
-                              <div className="text-sm space-y-1">
-                                <p className="text-muted-foreground flex items-center space-x-1">
-                                  <User className="h-3 w-3" />
-                                  <span>Por: <span className="font-medium">{entry.usuario}</span></span>
-                                </p>
+                              <Box sx={{ fontSize: '0.875rem', '& > *': { mb: 0.5 } }}>
+                                <Box sx={{ color: 'hsl(var(--muted-foreground))', display: 'flex', alignItems: 'center', gap: 0.5 }}>
+                                  <User style={{ width: 12, height: 12 }} />
+                                  <span>Por: <Box component="span" sx={{ fontWeight: 500 }}>{entry.usuario}</Box></span>
+                                </Box>
                                 
                                 {entry.notas && (
-                                  <p className="text-sm bg-muted/30 p-2 rounded text-muted-foreground">
+                                  <Typography variant="body2" sx={{ 
+                                    bgcolor: 'hsl(var(--muted) / 0.3)', 
+                                    p: 1, 
+                                    borderRadius: 1, 
+                                    color: 'hsl(var(--muted-foreground))' 
+                                  }}>
                                     {entry.notas}
-                                  </p>
+                                  </Typography>
                                 )}
-                              </div>
-                            </div>
+                              </Box>
+                            </Box>
                           ))}
-                        </div>
+                        </Box>
                       ) : (
-                        <p className="text-center text-muted-foreground py-4 text-sm">
+                        <Typography variant="body2" sx={{ textAlign: 'center', color: 'hsl(var(--muted-foreground))', py: 2 }}>
                           No hay historial disponible
-                        </p>
+                        </Typography>
                       )}
-                    </div>
-                  </div>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             ) : (
-              <Card>
-                <CardContent className="text-center py-12">
-                  <Shield className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">Selecciona una denuncia</h3>
-                  <p className="text-muted-foreground">
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', height: 'fit-content' }}>
+                <CardContent sx={{ textAlign: 'center', py: { xs: 6, md: 8, lg: 10 } }}>
+                  <Shield style={{ width: 64, height: 64, margin: '0 auto 24px', color: 'hsl(var(--muted-foreground))', opacity: 0.5 }} />
+                  <Typography variant="h5" sx={{ fontWeight: 500, mb: 2, color: 'hsl(var(--foreground))' }}>
+                    Selecciona una denuncia
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', maxWidth: '24rem', mx: 'auto' }}>
                     Elige una denuncia de la lista para ver sus detalles y actualizar su estado.
-                  </p>
+                  </Typography>
                 </CardContent>
               </Card>
             )}
-          </div>
-        </div>
+          </Grid>
+        </Grid>
 
         {/* Estadísticas rápidas */}
-        <div className="grid md:grid-cols-3 gap-6 mt-8">
-          <Card>
-            <CardContent className="text-center pt-6">
-              <div className="text-2xl font-bold text-warning">
-                {loading ? '...' : data?.resumen.pendientes || 0}
-              </div>
-              <div className="text-sm text-muted-foreground">Pendientes</div>
-            </CardContent>
-          </Card>
+        <Grid container spacing={{ xs: 2, md: 3, lg: 4 }} sx={{ mt: { xs: 4, md: 6, lg: 8 }, justifyContent: 'center', maxWidth: '800px', mx: 'auto' }}>
+          <Grid xs={12} sm={4}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+              <CardContent sx={{ textAlign: 'center', p: { xs: 3, md: 4 } }}>
+                <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--warning))', mb: 1.5 }}>
+                  {loading ? '...' : data?.resumen.pendientes || 0}
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                  Pendientes
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
           
-          <Card>
-            <CardContent className="text-center pt-6">
-              <div className="text-2xl font-bold text-primary">
-                {loading ? '...' : data?.resumen.en_proceso || 0}
-              </div>
-              <div className="text-sm text-muted-foreground">En Proceso</div>
-            </CardContent>
-          </Card>
+          <Grid xs={12} sm={4}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+              <CardContent sx={{ textAlign: 'center', p: { xs: 3, md: 4 } }}>
+                <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--primary))', mb: 1.5 }}>
+                  {loading ? '...' : data?.resumen.en_proceso || 0}
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                  En Proceso
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
           
-          <Card>
-            <CardContent className="text-center pt-6">
-              <div className="text-2xl font-bold text-success">
-                {loading ? '...' : data?.resumen.resueltas || 0}
-              </div>
-              <div className="text-sm text-muted-foreground">Resueltas</div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+          <Grid xs={12} sm={4}>
+            <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+              <CardContent sx={{ textAlign: 'center', p: { xs: 3, md: 4 } }}>
+                <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--success))', mb: 1.5 }}>
+                  {loading ? '...' : data?.resumen.resueltas || 0}
+                </Typography>
+                <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                  Resueltas
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+      </Container>
+    </Box>
   );
 };
 

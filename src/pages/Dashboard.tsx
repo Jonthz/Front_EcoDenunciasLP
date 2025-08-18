@@ -1,26 +1,56 @@
 import { useState, useEffect } from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { useToast } from "@/components/ui/use-toast";
-import { CalendarDays, MapPin, Filter, TrendingUp, AlertTriangle, CheckCircle, Clock, Calendar, BarChart3 } from "lucide-react";
+import {
+  Box,
+  Container,
+  Typography,
+  Button as MuiButton,
+  Card,
+  CardContent,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Grid,
+  Chip,
+  Divider,
+  Skeleton,
+  Snackbar,
+  Alert
+} from "@mui/material";
+import { CalendarDays, MapPin, Filter, TrendingUp, AlertTriangle, CheckCircle, Clock, Calendar, BarChart3, Flame, Droplets, Mountain, Trees, Trash2, Volume2 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@/components/ui/skeleton";
-import CrimeTypeBadge from "@/components/ui/crime-type-badge";
-import StatusBadge from "@/components/ui/status-badge";
 import { fetchResumenSemanal, categoriaMapping, ResumenSemanal, DenunciaResumen, ApiResponse } from "@/services/apiService";
 
 const Dashboard = () => {
-  const { toast } = useToast();
   const [data, setData] = useState<ResumenSemanal | null>(null);
   const [loading, setLoading] = useState(true);
+  const [toast, setToast] = useState<{
+    open: boolean;
+    message: string;
+    severity: 'error' | 'success' | 'warning' | 'info';
+  }>({
+    open: false,
+    message: '',
+    severity: 'info'
+  });
   const [filters, setFilters] = useState({
     zona: "",
     categoria: "all",
     limite: 10
   });
+
+  const showToast = (message: string, severity: 'error' | 'success' | 'warning' | 'info' = 'info') => {
+    setToast({
+      open: true,
+      message,
+      severity
+    });
+  };
+
+  const handleCloseToast = () => {
+    setToast(prev => ({ ...prev, open: false }));
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -34,18 +64,10 @@ const Dashboard = () => {
       if (response.success && response.data) {
         setData(response.data);
       } else {
-        toast({
-          title: "Error al cargar datos",
-          description: response.message,
-          variant: "destructive"
-        });
+        showToast(response.message || "Error al cargar datos", "error");
       }
     } catch (error) {
-      toast({
-        title: "Error de conexión",
-        description: "No se pudo conectar con el servidor",
-        variant: "destructive"
-      });
+      showToast("No se pudo conectar con el servidor", "error");
     } finally {
       setLoading(false);
     }
@@ -73,314 +95,557 @@ const Dashboard = () => {
 
   const getPriorityColor = (prioridad: string) => {
     switch (prioridad) {
-      case "alta": return "text-destructive";
-      case "media": return "text-warning";
-      case "baja": return "text-muted-foreground";
-      default: return "text-muted-foreground";
+      case "alta": return "error";
+      case "media": return "warning";
+      case "baja": return "default";
+      default: return "default";
     }
   };
 
   const getPriorityIcon = (prioridad: string) => {
     switch (prioridad) {
-      case "alta": return <AlertTriangle className="h-3 w-3" />;
-      case "media": return <Clock className="h-3 w-3" />;
-      case "baja": return <CheckCircle className="h-3 w-3" />;
-      default: return <Clock className="h-3 w-3" />;
+      case "alta": return <AlertTriangle style={{ width: 12, height: 12 }} />;
+      case "media": return <Clock style={{ width: 12, height: 12 }} />;
+      case "baja": return <CheckCircle style={{ width: 12, height: 12 }} />;
+      default: return <Clock style={{ width: 12, height: 12 }} />;
     }
+  };
+
+  const getCrimeTypeBadge = (type: string) => {
+    const getTypeConfig = (type: string) => {
+      switch (type) {
+        case "contaminacion_agua":
+          return {
+            label: "Contaminación de Agua",
+            icon: <Droplets style={{ width: 12, height: 12 }} />,
+            color: "#2563eb" as const,
+            bgcolor: "#dbeafe" as const
+          };
+        case "contaminacion_aire":
+          return {
+            label: "Contaminación de Aire",
+            icon: <AlertTriangle style={{ width: 12, height: 12 }} />,
+            color: "#6b7280" as const,
+            bgcolor: "#f3f4f6" as const
+          };
+        case "deforestacion":
+          return {
+            label: "Deforestación",
+            icon: <Trees style={{ width: 12, height: 12 }} />,
+            color: "#16a34a" as const,
+            bgcolor: "#dcfce7" as const
+          };
+        case "manejo_residuos":
+          return {
+            label: "Manejo de Residuos",
+            icon: <Trash2 style={{ width: 12, height: 12 }} />,
+            color: "#ca8a04" as const,
+            bgcolor: "#fef3c7" as const
+          };
+        case "ruido_excesivo":
+          return {
+            label: "Ruido Excesivo",
+            icon: <Volume2 style={{ width: 12, height: 12 }} />,
+            color: "#9333ea" as const,
+            bgcolor: "#f3e8ff" as const
+          };
+        case "contaminacion_suelo":
+          return {
+            label: "Contaminación de Suelo",
+            icon: <Mountain style={{ width: 12, height: 12 }} />,
+            color: "#ea580c" as const,
+            bgcolor: "#fed7aa" as const
+          };
+        case "incendio":
+          return {
+            label: "Incendio Forestal",
+            icon: <Flame style={{ width: 12, height: 12 }} />,
+            color: "#dc2626" as const,
+            bgcolor: "#fecaca" as const
+          };
+        default:
+          return {
+            label: "Otros",
+            icon: <AlertTriangle style={{ width: 12, height: 12 }} />,
+            color: "#6b7280" as const,
+            bgcolor: "#f3f4f6" as const
+          };
+      }
+    };
+
+    const config = getTypeConfig(type);
+    return (
+      <Chip
+        icon={config.icon}
+        label={config.label}
+        size="small"
+        variant="outlined"
+        sx={{
+          color: config.color,
+          borderColor: config.color,
+          backgroundColor: config.bgcolor,
+          '& .MuiChip-icon': {
+            color: config.color
+          }
+        }}
+      />
+    );
+  };
+
+  const getStatusBadge = (status: string) => {
+    const getStatusConfig = (status: string) => {
+      switch (status) {
+        case "pendiente":
+          return {
+            label: "Pendiente",
+            color: "#ca8a04" as const,
+            bgcolor: "#fef3c7" as const
+          };
+        case "en_proceso":
+          return {
+            label: "En Proceso",
+            color: "#2563eb" as const,
+            bgcolor: "#dbeafe" as const
+          };
+        case "resuelta":
+          return {
+            label: "Resuelta",
+            color: "#16a34a" as const,
+            bgcolor: "#dcfce7" as const
+          };
+        default:
+          return {
+            label: "Desconocido",
+            color: "#6b7280" as const,
+            bgcolor: "#f3f4f6" as const
+          };
+      }
+    };
+
+    const config = getStatusConfig(status);
+    return (
+      <Chip
+        label={config.label}
+        size="small"
+        variant="outlined"
+        sx={{
+          color: config.color,
+          borderColor: config.color,
+          backgroundColor: config.bgcolor
+        }}
+      />
+    );
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background py-8">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold mb-4">Resumen Semanal</h1>
-            <p className="text-muted-foreground">
+      <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+        <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
+          <Box sx={{ textAlign: 'center', mb: 4 }}>
+            <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2 }}>
+              Resumen Semanal
+            </Typography>
+            <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
               Dashboard de denuncias ambientales de los últimos 7 días
-            </p>
-          </div>
+            </Typography>
+          </Box>
 
           {/* Loading skeleton */}
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
+          <Grid container spacing={3} sx={{ mb: 4 }}>
             {[...Array(4)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="pt-6">
-                  <Skeleton className="h-8 w-16 mb-2" />
-                  <Skeleton className="h-4 w-20" />
-                </CardContent>
-              </Card>
+              <Grid key={i} xs={12} md={3}>
+                <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                  <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                    <Skeleton width={64} height={32} sx={{ mx: 'auto', mb: 1 }} />
+                    <Skeleton width={80} height={20} sx={{ mx: 'auto' }} />
+                  </CardContent>
+                </Card>
+              </Grid>
             ))}
-          </div>
+          </Grid>
 
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <div className="grid md:grid-cols-3 gap-4">
-                <Skeleton className="h-10" />
-                <Skeleton className="h-10" />
-                <Skeleton className="h-10" />
-              </div>
+          <Card sx={{ mb: 4, bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+            <CardContent sx={{ p: 3 }}>
+              <Grid container spacing={2}>
+                <Grid xs={12} md={4}>
+                  <Skeleton height={56} />
+                </Grid>
+                <Grid xs={12} md={4}>
+                  <Skeleton height={56} />
+                </Grid>
+                <Grid xs={12} md={4}>
+                  <Skeleton height={56} />
+                </Grid>
+              </Grid>
             </CardContent>
           </Card>
 
-          <div className="space-y-4">
+          <Box sx={{ '& > *': { mb: 2 } }}>
             {[...Array(3)].map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-6">
-                  <Skeleton className="h-24" />
+              <Card key={i} sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+                <CardContent sx={{ p: 3 }}>
+                  <Skeleton height={96} />
                 </CardContent>
               </Card>
             ))}
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Container>
+      </Box>
     );
   }
 
   return (
-    <div className="min-h-screen bg-background py-8">
-      <div className="container mx-auto px-4">
+    <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
+      <Container maxWidth="xl" sx={{ px: { xs: 2, sm: 3, md: 4 } }}>
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-4">Resumen Semanal</h1>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
+        <Box sx={{ textAlign: 'center', mb: 4 }}>
+          <Typography variant="h3" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+            Resumen Semanal
+          </Typography>
+          <Typography variant="h6" sx={{ color: 'hsl(var(--muted-foreground))', maxWidth: '48rem', mx: 'auto' }}>
             Dashboard de denuncias ambientales de los últimos 7 días
-          </p>
+          </Typography>
           {data && (
-            <p className="text-sm text-muted-foreground mt-2">
+            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', mt: 1 }}>
               Última actualización: {data.resumen.fecha_consulta}
-            </p>
+            </Typography>
           )}
-        </div>
+        </Box>
 
         {/* Statistics Cards */}
         {data && (
-          <div className="grid md:grid-cols-4 gap-6 mb-8">
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-primary mb-2">
-                  {data.resumen.total_denuncias}
-                </div>
-                <div className="text-sm text-muted-foreground">Total Denuncias</div>
-                <TrendingUp className="h-4 w-4 mx-auto mt-2 text-primary" />
-              </CardContent>
-            </Card>
+          <Grid container spacing={3} sx={{ mb: 4 }}>
+            <Grid xs={12} md={3}>
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--primary))', mb: 1 }}>
+                    {data.resumen.total_denuncias}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                    Total Denuncias
+                  </Typography>
+                  <TrendingUp style={{ width: 16, height: 16, marginTop: 8, color: 'hsl(var(--primary))' }} />
+                </CardContent>
+              </Card>
+            </Grid>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-warning mb-2">
-                  {data.resumen.pendientes}
-                </div>
-                <div className="text-sm text-muted-foreground">Pendientes</div>
-                <Clock className="h-4 w-4 mx-auto mt-2 text-warning" />
-              </CardContent>
-            </Card>
+            <Grid xs={12} md={3}>
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--warning))', mb: 1 }}>
+                    {data.resumen.pendientes}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                    Pendientes
+                  </Typography>
+                  <Clock style={{ width: 16, height: 16, marginTop: 8, color: 'hsl(var(--warning))' }} />
+                </CardContent>
+              </Card>
+            </Grid>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-accent mb-2">
-                  {data.resumen.en_proceso}
-                </div>
-                <div className="text-sm text-muted-foreground">En Proceso</div>
-                <AlertTriangle className="h-4 w-4 mx-auto mt-2 text-accent" />
-              </CardContent>
-            </Card>
+            <Grid xs={12} md={3}>
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--accent))', mb: 1 }}>
+                    {data.resumen.en_proceso}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                    En Proceso
+                  </Typography>
+                  <AlertTriangle style={{ width: 16, height: 16, marginTop: 8, color: 'hsl(var(--accent))' }} />
+                </CardContent>
+              </Card>
+            </Grid>
             
-            <Card>
-              <CardContent className="text-center pt-6">
-                <div className="text-2xl font-bold text-success mb-2">
-                  {data.resumen.resueltas}
-                </div>
-                <div className="text-sm text-muted-foreground">Resueltas</div>
-                <CheckCircle className="h-4 w-4 mx-auto mt-2 text-success" />
-              </CardContent>
-            </Card>
-          </div>
+            <Grid xs={12} md={3}>
+              <Card sx={{ bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', transition: 'transform 0.2s', '&:hover': { transform: 'translateY(-2px)' } }}>
+                <CardContent sx={{ textAlign: 'center', p: 3 }}>
+                  <Typography variant="h3" sx={{ fontWeight: 'bold', color: 'hsl(var(--success))', mb: 1 }}>
+                    {data.resumen.resueltas}
+                  </Typography>
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--muted-foreground))', fontWeight: 500 }}>
+                    Resueltas
+                  </Typography>
+                  <CheckCircle style={{ width: 16, height: 16, marginTop: 8, color: 'hsl(var(--success))' }} />
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         )}
 
         {/* Filters */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Filter className="h-5 w-5" />
-              <span>Filtros de Búsqueda</span>
-            </CardTitle>
-            <CardDescription>
+        <Card sx={{ mb: 4, bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
+          <CardContent sx={{ p: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+              <Filter style={{ width: 20, height: 20 }} />
+              <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'hsl(var(--foreground))' }}>
+                Filtros de Búsqueda
+              </Typography>
+            </Box>
+            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))', mb: 3 }}>
               Filtra las denuncias por zona, categoría y cantidad de resultados
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-4 gap-4 mb-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Zona</label>
-                <Input
+            </Typography>
+            
+            <Grid container spacing={2} sx={{ mb: 2 }}>
+              <Grid xs={12} md={3}>
+                <TextField
+                  fullWidth
+                  size="small"
+                  label="Zona"
                   placeholder="Buscar por ubicación..."
                   value={filters.zona}
                   onChange={(e) => handleFilterChange('zona', e.target.value)}
                 />
-              </div>
+              </Grid>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Categoría</label>
-                <Select value={filters.categoria} onValueChange={(value) => handleFilterChange('categoria', value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Todas las categorías" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Todas las categorías</SelectItem>
-                    <SelectItem value="contaminacion_agua">Contaminación de Agua</SelectItem>
-                    <SelectItem value="contaminacion_aire">Contaminación de Aire</SelectItem>
-                    <SelectItem value="deforestacion">Deforestación</SelectItem>
-                    <SelectItem value="manejo_residuos">Manejo de Residuos</SelectItem>
-                    <SelectItem value="ruido_excesivo">Ruido Excesivo</SelectItem>
-                    <SelectItem value="contaminacion_suelo">Contaminación de Suelo</SelectItem>
-                    <SelectItem value="otros">Otros</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Grid xs={12} md={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Categoría</InputLabel>
+                  <Select
+                    value={filters.categoria}
+                    onChange={(e) => handleFilterChange('categoria', e.target.value)}
+                    label="Categoría"
+                  >
+                    <MenuItem value="all">Todas las categorías</MenuItem>
+                    <MenuItem value="contaminacion_agua">Contaminación de Agua</MenuItem>
+                    <MenuItem value="contaminacion_aire">Contaminación de Aire</MenuItem>
+                    <MenuItem value="deforestacion">Deforestación</MenuItem>
+                    <MenuItem value="manejo_residuos">Manejo de Residuos</MenuItem>
+                    <MenuItem value="ruido_excesivo">Ruido Excesivo</MenuItem>
+                    <MenuItem value="contaminacion_suelo">Contaminación de Suelo</MenuItem>
+                    <MenuItem value="otros">Otros</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Límite</label>
-                <Select value={filters.limite.toString()} onValueChange={(value) => handleFilterChange('limite', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5 resultados</SelectItem>
-                    <SelectItem value="10">10 resultados</SelectItem>
-                    <SelectItem value="20">20 resultados</SelectItem>
-                    <SelectItem value="50">50 resultados</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+              <Grid xs={12} md={3}>
+                <FormControl fullWidth size="small">
+                  <InputLabel>Límite</InputLabel>
+                  <Select
+                    value={filters.limite.toString()}
+                    onChange={(e) => handleFilterChange('limite', e.target.value)}
+                    label="Límite"
+                  >
+                    <MenuItem value="5">5 resultados</MenuItem>
+                    <MenuItem value="10">10 resultados</MenuItem>
+                    <MenuItem value="20">20 resultados</MenuItem>
+                    <MenuItem value="50">50 resultados</MenuItem>
+                  </Select>
+                </FormControl>
+              </Grid>
 
-              <div className="space-y-2 flex items-end">
-                <div className="flex space-x-2 w-full">
-                  <Button onClick={applyFilters} className="flex-1">
+              <Grid xs={12} md={3}>
+                <Box sx={{ display: 'flex', gap: 1, height: '100%', alignItems: 'center' }}>
+                  <MuiButton
+                    onClick={applyFilters}
+                    variant="contained"
+                    sx={{
+                      flex: 1,
+                      bgcolor: 'hsl(var(--primary))',
+                      color: 'hsl(var(--primary-foreground))',
+                      '&:hover': {
+                        bgcolor: 'hsl(var(--primary) / 0.9)'
+                      }
+                    }}
+                  >
                     Aplicar
-                  </Button>
-                  <Button variant="outline" onClick={clearFilters}>
+                  </MuiButton>
+                  <MuiButton
+                    onClick={clearFilters}
+                    variant="outlined"
+                    sx={{
+                      borderColor: 'hsl(var(--border))',
+                      color: 'hsl(var(--foreground))',
+                      '&:hover': {
+                        bgcolor: 'hsl(var(--accent))',
+                        borderColor: 'hsl(var(--accent-foreground))'
+                      }
+                    }}
+                  >
                     Limpiar
-                  </Button>
-                </div>
-              </div>
-            </div>
+                  </MuiButton>
+                </Box>
+              </Grid>
+            </Grid>
 
             {data?.filtros_aplicados && Object.keys(data.filtros_aplicados).length > 0 && (
-              <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
                 <span>Filtros activos:</span>
                 {data.filtros_aplicados.zona && (
-                  <Badge variant="outline">Zona: {data.filtros_aplicados.zona}</Badge>
+                  <Chip label={`Zona: ${data.filtros_aplicados.zona}`} size="small" variant="outlined" />
                 )}
                 {data.filtros_aplicados.categoria && (
-                  <Badge variant="outline">
-                    Categoría: {categoriaMapping[data.filtros_aplicados.categoria] || data.filtros_aplicados.categoria}
-                  </Badge>
+                  <Chip 
+                    label={`Categoría: ${categoriaMapping[data.filtros_aplicados.categoria] || data.filtros_aplicados.categoria}`}
+                    size="small" 
+                    variant="outlined" 
+                  />
                 )}
-                <Badge variant="outline">Límite: {data.filtros_aplicados.limite}</Badge>
-              </div>
+                <Chip label={`Límite: ${data.filtros_aplicados.limite}`} size="small" variant="outlined" />
+              </Box>
             )}
           </CardContent>
         </Card>
 
         {/* Results */}
-        <div className="space-y-6">
+        <Box sx={{ '& > *': { mb: 3 } }}>
           {data && data.denuncias.length === 0 ? (
-            <Card className="text-center py-12">
+            <Card sx={{ textAlign: 'center', py: 6, bgcolor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))' }}>
               <CardContent>
-                <div className="text-muted-foreground">
-                  <Filter className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg mb-2">No se encontraron denuncias</p>
-                  <p>Intenta ajustar los filtros de búsqueda</p>
-                </div>
+                <Filter style={{ width: 48, height: 48, margin: '0 auto 16px', color: 'hsl(var(--muted-foreground))', opacity: 0.5 }} />
+                <Typography variant="h6" sx={{ mb: 1, color: 'hsl(var(--foreground))' }}>
+                  No se encontraron denuncias
+                </Typography>
+                <Typography sx={{ color: 'hsl(var(--muted-foreground))' }}>
+                  Intenta ajustar los filtros de búsqueda
+                </Typography>
               </CardContent>
             </Card>
           ) : (
             data?.denuncias.map((denuncia: DenunciaResumen) => (
-              <Card key={denuncia.id} className="hover:shadow-lg transition-shadow">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2 flex-1">
-                      <div className="flex items-center space-x-2 flex-wrap gap-2">
-                        <CrimeTypeBadge type={denuncia.tipo_problema as any} />
-                        <StatusBadge status={denuncia.estado as any} />
-                        <Badge 
-                          variant="outline" 
-                          className={`flex items-center space-x-1 ${getPriorityColor(denuncia.prioridad)}`}
-                        >
-                          {getPriorityIcon(denuncia.prioridad)}
-                          <span>Prioridad {denuncia.prioridad}</span>
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl">{denuncia.descripcion_corta}</CardTitle>
-                    </div>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <CardDescription className="text-base mb-4">
-                    {denuncia.descripcion_completa}
-                  </CardDescription>
+              <Card 
+                key={denuncia.id} 
+                sx={{ 
+                  bgcolor: 'hsl(var(--card))', 
+                  borderColor: 'hsl(var(--border))',
+                  transition: 'box-shadow 0.3s ease',
+                  '&:hover': {
+                    boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)'
+                  }
+                }}
+              >
+                <CardContent sx={{ p: 3 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
+                    <Box sx={{ flex: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap', mb: 2 }}>
+                        {getCrimeTypeBadge(denuncia.tipo_problema)}
+                        {getStatusBadge(denuncia.estado)}
+                        <Chip
+                          icon={getPriorityIcon(denuncia.prioridad)}
+                          label={`Prioridad ${denuncia.prioridad}`}
+                          size="small"
+                          color={getPriorityColor(denuncia.prioridad) as any}
+                          variant="outlined"
+                        />
+                      </Box>
+                      <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 2, color: 'hsl(var(--foreground))' }}>
+                        {denuncia.descripcion_corta}
+                      </Typography>
+                    </Box>
+                  </Box>
                   
-                  <div className="space-y-3">
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <MapPin className="h-4 w-4" />
+                  <Typography variant="body1" sx={{ color: 'hsl(var(--foreground))', mb: 2 }}>
+                    {denuncia.descripcion_completa}
+                  </Typography>
+                  
+                  <Box sx={{ '& > *': { mb: 1.5 } }}>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
+                      <MapPin style={{ width: 16, height: 16 }} />
                       <span>{denuncia.ubicacion}</span>
-                    </div>
+                    </Box>
                     
-                    <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-                      <CalendarDays className="h-4 w-4" />
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, fontSize: '0.875rem', color: 'hsl(var(--muted-foreground))' }}>
+                      <CalendarDays style={{ width: 16, height: 16 }} />
                       <span>{denuncia.fecha} ({denuncia.fecha_relativa})</span>
-                    </div>
+                    </Box>
                     
-                    <div className="flex items-center justify-between pt-2">
-                      <div className="flex items-center space-x-2">
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pt: 1 }}>
+                      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         {denuncia.imagen && (
-                          <Badge variant="outline" className="text-xs">
-                            📷 Con evidencia
-                          </Badge>
+                          <Chip label="📷 Con evidencia" size="small" variant="outlined" />
                         )}
-                        <Badge variant="outline" className="text-xs">
-                          {denuncia.dias_transcurridos} días transcurridos
-                        </Badge>
-                      </div>
+                        <Chip 
+                          label={`${denuncia.dias_transcurridos} días transcurridos`} 
+                          size="small" 
+                          variant="outlined" 
+                        />
+                      </Box>
                       
-                      <span className="text-xs text-muted-foreground">
+                      <Typography variant="caption" sx={{ color: 'hsl(var(--muted-foreground))' }}>
                         ID: #{denuncia.id.toString().padStart(4, '0')}
-                      </span>
-                    </div>
-                  </div>
+                      </Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             ))
           )}
-        </div>
+        </Box>
 
         {/* Results count */}
         {data && data.denuncias.length > 0 && (
-          <div className="mt-8 text-center">
-            <p className="text-muted-foreground text-sm">
+          <Box sx={{ mt: 4, textAlign: 'center' }}>
+            <Typography variant="body2" sx={{ color: 'hsl(var(--muted-foreground))' }}>
               Mostrando {data.denuncias.length} denuncias del periodo: {data.resumen.periodo}
-            </p>
-          </div>
+            </Typography>
+          </Box>
         )}
 
         {/* Quick Actions */}
-        <div className="mt-8 flex justify-center space-x-4">
-          <Link to="/calendario-semanal">
-            <Button variant="outline" className="flex items-center space-x-2">
-              <Calendar className="h-4 w-4" />
-              <span>Ver Calendario Semanal</span>
-            </Button>
-          </Link>
-          <Link to="/reportes">
-            <Button variant="outline" className="flex items-center space-x-2">
-              <BarChart3 className="h-4 w-4" />
-              <span>Ver Reportes Completos</span>
-            </Button>
-          </Link>
-        </div>
-      </div>
-    </div>
+        <Box sx={{ 
+          mt: 4, 
+          display: 'flex', 
+          flexDirection: { xs: 'column', sm: 'row' }, 
+          gap: 2, 
+          justifyContent: 'center' 
+        }}>
+          <MuiButton
+            component={Link}
+            to="/calendario-semanal"
+            variant="outlined"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))',
+              '&:hover': {
+                bgcolor: 'hsl(var(--accent))',
+                borderColor: 'hsl(var(--accent-foreground))'
+              }
+            }}
+          >
+            <Calendar style={{ width: 16, height: 16 }} />
+            <span>Ver Calendario Semanal</span>
+          </MuiButton>
+          <MuiButton
+            component={Link}
+            to="/reportes"
+            variant="outlined"
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 1,
+              borderColor: 'hsl(var(--border))',
+              color: 'hsl(var(--foreground))',
+              '&:hover': {
+                bgcolor: 'hsl(var(--accent))',
+                borderColor: 'hsl(var(--accent-foreground))'
+              }
+            }}
+          >
+            <BarChart3 style={{ width: 16, height: 16 }} />
+            <span>Ver Reportes Completos</span>
+          </MuiButton>
+        </Box>
+
+        {/* Toast/Snackbar */}
+        <Snackbar
+          open={toast.open}
+          autoHideDuration={6000}
+          onClose={handleCloseToast}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        >
+          <Alert 
+            onClose={handleCloseToast} 
+            severity={toast.severity}
+            sx={{ width: '100%' }}
+          >
+            {toast.message}
+          </Alert>
+        </Snackbar>
+      </Container>
+    </Box>
   );
 };
 

@@ -1,81 +1,187 @@
 import { Link, useLocation } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Leaf, Plus, List, Shield, Calendar } from "lucide-react";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  Button as MuiButton,
+  Box,
+  Container,
+  IconButton,
+  useTheme
+} from "@mui/material";
+import { Leaf, Plus, List, Shield, Calendar, Menu } from "lucide-react";
 
 const Navbar = () => {
   const location = useLocation();
+  const theme = useTheme();
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <nav className="bg-card border-b border-border shadow-sm">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            <Leaf className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold text-foreground">EcoDenuncia</span>
-          </Link>
+    <AppBar 
+      position="static" 
+      elevation={0}
+      sx={{ 
+        bgcolor: 'hsl(var(--card))',
+        borderBottom: '1px solid hsl(var(--border))',
+        boxShadow: '0 1px 2px 0 rgb(0 0 0 / 0.05)'
+      }}
+    >
+      <Container maxWidth="xl">
+        <Toolbar sx={{ minHeight: '64px !important', px: { xs: 1, sm: 2 } }}>
+          {/* Logo */}
+          <Box 
+            component={Link} 
+            to="/" 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: 1,
+              textDecoration: 'none',
+              color: 'inherit'
+            }}
+          >
+            <Leaf style={{ width: 32, height: 32, color: 'hsl(var(--primary))' }} />
+            <Typography 
+              variant="h6" 
+              sx={{ 
+                fontWeight: 'bold', 
+                color: 'hsl(var(--foreground))',
+                fontSize: '1.25rem'
+              }}
+            >
+              EcoDenuncia
+            </Typography>
+          </Box>
 
-          <div className="hidden md:flex items-center space-x-4">
-            <Link to="/">
-              <Button
-                variant={isActive("/") ? "default" : "ghost"}
-                className="flex items-center space-x-2"
-              >
-                <span>Inicio</span>
-              </Button>
-            </Link>
+          {/* Desktop Navigation */}
+          <Box sx={{ 
+            display: { xs: 'none', md: 'flex' }, 
+            alignItems: 'center', 
+            gap: 1,
+            ml: 'auto'
+          }}>
+            <MuiButton
+              component={Link}
+              to="/"
+              variant={isActive("/") ? "contained" : "text"}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: isActive("/") ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                bgcolor: isActive("/") ? 'hsl(var(--primary))' : 'transparent',
+                '&:hover': {
+                  bgcolor: isActive("/") ? 'hsl(var(--primary) / 0.9)' : 'hsl(var(--accent))',
+                },
+                textTransform: 'none',
+                fontWeight: 500
+              }}
+            >
+              <span>Inicio</span>
+            </MuiButton>
             
-            <Link to="/crear-denuncia">
-              <Button
-                variant={isActive("/crear-denuncia") ? "default" : "ghost"}
-                className="flex items-center space-x-2"
-              >
-                <Plus className="h-4 w-4" />
-                <span>Nueva Denuncia</span>
-              </Button>
-            </Link>
+            <MuiButton
+              component={Link}
+              to="/crear-denuncia"
+              variant={isActive("/crear-denuncia") ? "contained" : "text"}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: isActive("/crear-denuncia") ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                bgcolor: isActive("/crear-denuncia") ? 'hsl(var(--primary))' : 'transparent',
+                '&:hover': {
+                  bgcolor: isActive("/crear-denuncia") ? 'hsl(var(--primary) / 0.9)' : 'hsl(var(--accent))',
+                },
+                textTransform: 'none',
+                fontWeight: 500
+              }}
+            >
+              <Plus style={{ width: 16, height: 16 }} />
+              <span>Nueva Denuncia</span>
+            </MuiButton>
             
-            <Link to="/denuncias">
-              <Button
-                variant={isActive("/denuncias") ? "default" : "ghost"}
-                className="flex items-center space-x-2"
-              >
-                <List className="h-4 w-4" />
-                <span>Ver Denuncias</span>
-              </Button>
-            </Link>
+            <MuiButton
+              component={Link}
+              to="/denuncias"
+              variant={isActive("/denuncias") ? "contained" : "text"}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: isActive("/denuncias") ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                bgcolor: isActive("/denuncias") ? 'hsl(var(--primary))' : 'transparent',
+                '&:hover': {
+                  bgcolor: isActive("/denuncias") ? 'hsl(var(--primary) / 0.9)' : 'hsl(var(--accent))',
+                },
+                textTransform: 'none',
+                fontWeight: 500
+              }}
+            >
+              <List style={{ width: 16, height: 16 }} />
+              <span>Ver Denuncias</span>
+            </MuiButton>
             
-            <Link to="/calendario-semanal">
-              <Button
-                variant={isActive("/calendario-semanal") ? "default" : "ghost"}
-                className="flex items-center space-x-2"
-              >
-                <Calendar className="h-4 w-4" />
-                <span>Calendario</span>
-              </Button>
-            </Link>
+            <MuiButton
+              component={Link}
+              to="/calendario-semanal"
+              variant={isActive("/calendario-semanal") ? "contained" : "text"}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: isActive("/calendario-semanal") ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                bgcolor: isActive("/calendario-semanal") ? 'hsl(var(--primary))' : 'transparent',
+                '&:hover': {
+                  bgcolor: isActive("/calendario-semanal") ? 'hsl(var(--primary) / 0.9)' : 'hsl(var(--accent))',
+                },
+                textTransform: 'none',
+                fontWeight: 500
+              }}
+            >
+              <Calendar style={{ width: 16, height: 16 }} />
+              <span>Calendario</span>
+            </MuiButton>
             
-            <Link to="/admin">
-              <Button
-                variant={isActive("/admin") ? "secondary" : "ghost"}
-                className="flex items-center space-x-2"
-              >
-                <Shield className="h-4 w-4" />
-                <span>Administración</span>
-              </Button>
-            </Link>
-          </div>
+            <MuiButton
+              component={Link}
+              to="/admin"
+              variant={isActive("/admin") ? "contained" : "text"}
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 1,
+                color: isActive("/admin") ? 'hsl(var(--primary-foreground))' : 'hsl(var(--foreground))',
+                bgcolor: isActive("/admin") ? 'hsl(var(--primary))' : 'transparent',
+                '&:hover': {
+                  bgcolor: isActive("/admin") ? 'hsl(var(--primary) / 0.9)' : 'hsl(var(--accent))',
+                },
+                textTransform: 'none',
+                fontWeight: 500
+              }}
+            >
+              <Shield style={{ width: 16, height: 16 }} />
+              <span>Administración</span>
+            </MuiButton>
+          </Box>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
-            <Button variant="ghost" size="sm">
-              <List className="h-5 w-5" />
-            </Button>
-          </div>
-        </div>
-      </div>
-    </nav>
+          <Box sx={{ display: { xs: 'flex', md: 'none' }, ml: 'auto' }}>
+            <IconButton
+              sx={{
+                color: 'hsl(var(--foreground))',
+                '&:hover': {
+                  bgcolor: 'hsl(var(--accent))',
+                }
+              }}
+            >
+              <Menu style={{ width: 20, height: 20 }} />
+            </IconButton>
+          </Box>
+        </Toolbar>
+      </Container>
+    </AppBar>
   );
 };
 
