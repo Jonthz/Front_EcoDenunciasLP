@@ -4,7 +4,7 @@
 
 import { APP_CONFIG } from '@/config/app.config';
 
-export const USE_MOCK_DATA = APP_CONFIG.USE_MOCK_DATA;
+export const USE_MOCK_DATA = false;
 
 import type { 
   ResumenSemanal, 

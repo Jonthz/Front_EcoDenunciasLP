@@ -15,7 +15,7 @@ import {
 
 import { APP_CONFIG } from '@/config/app.config';
 
-const BASE_API = APP_CONFIG.API_BASE_URL;
+const api_url =  'http://localhost/EcoDenunciasLP/api';
 
 // Type definitions based on API documentation
 export interface ApiResponse<T = any> {
@@ -136,7 +136,7 @@ export interface ReporteUbicaciones {
 // Helper function for making API calls
 async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(`${BASE_API}${endpoint}`, {
+    const response = await fetch(`${api_url}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',
         ...options.headers,
@@ -158,7 +158,7 @@ async function apiCall<T>(endpoint: string, options: RequestInit = {}): Promise<
 // Helper function for form data uploads
 async function apiFormDataCall<T>(endpoint: string, formData: FormData): Promise<ApiResponse<T>> {
   try {
-    const response = await fetch(`${BASE_API}${endpoint}`, {
+    const response = await fetch(`${api_url}${endpoint}`, {
       method: 'POST',
       body: formData,
     });

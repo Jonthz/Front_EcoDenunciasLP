@@ -51,6 +51,11 @@ const AdminPanel = () => {
       if (response.success && response.data) {
         setData(response.data);
       } else {
+         console.error("❌ Error al cargar denuncias");
+          console.error("Mensaje:", response.message);
+          console.error("Success:", response.success);
+          console.error("Data:", response.data);
+          console.error("Respuesta completa:", response);
         toast({
           title: "Error al cargar denuncias",
           description: response.message,
