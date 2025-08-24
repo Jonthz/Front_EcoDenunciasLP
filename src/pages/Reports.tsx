@@ -148,10 +148,10 @@ const Reports = () => {
   })) || [];
 
   const estadosChartData = reporteGeneral ? [
-    { name: 'Pendientes', value: reporteGeneral.totales.pendientes, color: '#f59e0b' },
-    { name: 'En Proceso', value: reporteGeneral.totales.en_proceso, color: '#06b6d4' },
-    { name: 'Resueltas', value: reporteGeneral.totales.resueltas, color: '#10b981' }
-  ] : [];
+  { name: 'Pendientes', value: reporteGeneral.estadisticas_generales.denuncias_pendientes, color: '#f59e0b' },
+  { name: 'En Proceso', value: reporteGeneral.estadisticas_generales.denuncias_en_proceso, color: '#06b6d4' },
+  { name: 'Resueltas', value: reporteGeneral.estadisticas_generales.denuncias_resueltas, color: '#10b981' }
+] : [];
 
   if (loading) {
     return (
@@ -270,7 +270,7 @@ const Reports = () => {
             <Card>
               <CardContent className="text-center pt-6">
                 <div className="text-2xl font-bold text-primary mb-2">
-                  {reporteGeneral.totales.total}
+                  {reporteGeneral.estadisticas_generales.total_denuncias}
                 </div>
                 <div className="text-sm text-muted-foreground">Total Denuncias</div>
                 <TrendingUp className="h-4 w-4 mx-auto mt-2 text-primary" />
@@ -280,7 +280,7 @@ const Reports = () => {
             <Card>
               <CardContent className="text-center pt-6">
                 <div className="text-2xl font-bold text-warning mb-2">
-                  {reporteGeneral.totales.pendientes}
+                  {reporteGeneral.estadisticas_generales.denuncias_pendientes}
                 </div>
                 <div className="text-sm text-muted-foreground">Pendientes</div>
               </CardContent>
@@ -289,7 +289,7 @@ const Reports = () => {
             <Card>
               <CardContent className="text-center pt-6">
                 <div className="text-2xl font-bold text-accent mb-2">
-                  {reporteGeneral.totales.en_proceso}
+                  {reporteGeneral.estadisticas_generales.denuncias_en_proceso}
                 </div>
                 <div className="text-sm text-muted-foreground">En Proceso</div>
               </CardContent>
@@ -298,7 +298,7 @@ const Reports = () => {
             <Card>
               <CardContent className="text-center pt-6">
                 <div className="text-2xl font-bold text-success mb-2">
-                  {reporteGeneral.totales.resueltas}
+                  {reporteGeneral.estadisticas_generales.denuncias_resueltas}
                 </div>
                 <div className="text-sm text-muted-foreground">Resueltas</div>
               </CardContent>
@@ -369,25 +369,27 @@ const Reports = () => {
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">Período:</span>
                         <span className="text-sm text-muted-foreground">
-                          {reporteGeneral.periodo.inicio} - {reporteGeneral.periodo.fin}
+                          {reporteGeneral.periodo.fecha_inicio} - {reporteGeneral.periodo.fecha_fin}
                         </span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Promedio por día:</span>
+                        <span className="text-sm font-medium">Promedio días resolución:</span>
                         <span className="text-sm text-muted-foreground">
-                          {reporteGeneral.promedios.por_dia.toFixed(1)} denuncias
+                          {reporteGeneral.estadisticas_generales.promedio_dias_resolucion} días
                         </span>
                       </div>
                       
                       <div className="flex justify-between items-center">
-                        <span className="text-sm font-medium">Tendencia última semana:</span>
-                        <span className={`text-sm font-medium ${
-                          reporteGeneral.tendencias.ultima_semana.startsWith('+') 
-                            ? 'text-warning' 
-                            : 'text-success'
-                        }`}>
-                          {reporteGeneral.tendencias.ultima_semana}
+                        <span className="text-sm font-medium">Tasa de resolución:</span>
+                        <span className="text-sm font-medium text-success">
+                          {reporteGeneral.estadisticas_generales.tasa_resolucion}
+                        </span>
+                      </div>
+
+                      <div className="pt-2 border-t">
+                        <span className="text-sm text-muted-foreground">
+                          {reporteGeneral.explicacion}
                         </span>
                       </div>
                     </>

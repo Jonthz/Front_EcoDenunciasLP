@@ -103,10 +103,13 @@ export interface ComentariosResponse {
 }
 
 export interface HistorialEstado {
-  estado: string;
-  fecha: string;
-  usuario: string;
+  id: number;
+  estado_anterior: string;
+  estado_nuevo: string;
+  fecha_cambio: string;
+  usuario_responsable: string;
   notas: string | null;
+  tiempo_transcurrido: string;
 }
 
 export interface ReporteGeneral {

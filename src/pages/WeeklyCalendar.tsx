@@ -39,7 +39,7 @@ const WeeklyCalendar = () => {
       if (response.success && response.data) {
         setData(response.data);
         // Organizar las denuncias por día
-        organizarPorDias(response.data.denuncias);
+        organizarPorDias(response.data.denuncias, currentWeek);
       } else {
         toast({
           title: "Error al cargar calendario",
@@ -58,47 +58,72 @@ const WeeklyCalendar = () => {
     }
   };
 
-  // Función para organizar las denuncias por días de la semana
-  const organizarPorDias = (denuncias: DenunciaResumen[]) => {
-    // Crear estructura de 7 días de la semana
-    const nombresDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+ // Función para organizar las denuncias por días de la semana
+const organizarPorDias = (denuncias: DenunciaResumen[], fechaReferencia: Date) => {
+  console.log('📅 Iniciando organización por días. Denuncias recibidas:', denuncias.length);
+  
+  // Crear estructura de 7 días de la semana
+  const nombresDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+  
+  // Usar la semana de enero 2025 donde están los datos de mock
+  // Usar la fecha actual (24 agosto 2025) y calcular el inicio de esa semana
+  const hoy = new Date(fechaReferencia);
+  const diaSemana = hoy.getDay(); // 0 = domingo, 1 = lunes, etc.
+  const diasParaLunes = diaSemana === 0 ? -6 : 1 - diaSemana; // Calcular cuántos días restar para llegar al lunes
+  const inicioSemana = new Date(hoy);
+  inicioSemana.setDate(hoy.getDate() + diasParaLunes);
+
+  const diasSemana: DiaCalendario[] = [];
+
+  for (let i = 0; i < 7; i++) {
+    const fecha = new Date(inicioSemana);
+    fecha.setDate(inicioSemana.getDate() + i);
     
-    // Usar la semana de enero 2025 donde están los datos de mock
-    // Lunes 13 de enero 2025
-    const inicioSemana = new Date(2025, 0, 13); // 13 de enero 2025
-
-    const diasSemana: DiaCalendario[] = [];
-
-    for (let i = 0; i < 7; i++) {
-      const fecha = new Date(inicioSemana);
-      fecha.setDate(inicioSemana.getDate() + i);
+    const fechaStr = fecha.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    console.log(`📅 Procesando día ${i}: ${nombresDias[i]} - ${fecha.toLocaleDateString('es-ES')} (ISO: ${fechaStr})`);
+    
+    // Filtrar denuncias que correspondan a este día
+    const denunciasDia = denuncias.filter(denuncia => {
+      // Convertir la fecha de la denuncia para comparar
+      const partesFecha = denuncia.fecha.split(' ')[0].split('/');
       
-      const fechaStr = fecha.toISOString().split('T')[0];
-      
-      // Filtrar denuncias que correspondan a este día
-      const denunciasDia = denuncias.filter(denuncia => {
-        // Convertir la fecha de la denuncia para comparar
-        const partesFecha = denuncia.fecha.split(' ')[0].split('/');
-        if (partesFecha.length === 3) {
-          const fechaDenuncia = new Date(
-            parseInt(partesFecha[2]), // año
-            parseInt(partesFecha[1]) - 1, // mes (0-indexado)
-            parseInt(partesFecha[0]) // día
-          );
-          return fechaDenuncia.toISOString().split('T')[0] === fechaStr;
+      if (partesFecha.length === 3) {
+        const dia = parseInt(partesFecha[0]);
+        const mes = parseInt(partesFecha[1]) - 1; // mes 0-indexado
+        const año = parseInt(partesFecha[2]);
+        
+        // Validar que los valores sean números válidos
+        if (!isNaN(dia) && !isNaN(mes) && !isNaN(año)) {
+          const fechaDenuncia = new Date(año, mes, dia);
+          const fechaDenunciaStr = fechaDenuncia.toISOString().split('T')[0];
+          
+          console.log(`   🔍 Comparando denuncia #${denuncia.id}: ${denuncia.fecha} -> ${fechaDenunciaStr} === ${fechaStr}`, fechaDenunciaStr === fechaStr);
+          
+          return fechaDenunciaStr === fechaStr;
+        } else {
+          console.warn(`   ⚠️  Fecha inválida en denuncia #${denuncia.id}: ${denuncia.fecha}`);
         }
-        return false;
-      });
+      } else {
+        console.warn(`   ⚠️  Formato de fecha incorrecto en denuncia #${denuncia.id}: ${denuncia.fecha}`);
+      }
+      
+      return false;
+    });
 
-      diasSemana.push({
-        fecha: fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-        dia_semana: nombresDias[i],
-        denuncias: denunciasDia
-      });
-    }
+    console.log(`   ✅ ${nombresDias[i]}: ${denunciasDia.length} denuncias encontradas`);
 
-    setDiasCalendario(diasSemana);
-  };
+    diasSemana.push({
+      fecha: fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      dia_semana: nombresDias[i],
+      denuncias: denunciasDia
+    });
+  }
+
+  console.log('📅 Resultado final - días creados:', diasSemana.length);
+  console.log('📅 Resumen por día:', diasSemana.map(d => `${d.dia_semana}: ${d.denuncias.length}`));
+  
+  setDiasCalendario(diasSemana);
+};
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
@@ -108,21 +133,43 @@ const WeeklyCalendar = () => {
       default: return "text-muted-foreground";
     }
   };
+  const inicializarDiasVacios = (fechaReferencia: Date) => {
+  const nombresDias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+ const hoy = new Date(fechaReferencia);
+  const diaSemana = hoy.getDay(); // 0 = domingo, 1 = lunes, etc.
+  const diasParaLunes = diaSemana === 0 ? -6 : 1 - diaSemana; // Calcular cuántos días restar para llegar al lunes
+  const inicioSemana = new Date(hoy);
+  inicioSemana.setDate(hoy.getDate() + diasParaLunes);
 
-  const formatDate = (dateString: string) => {
-    // La fecha ya viene formateada desde organizarPorDias
-    return dateString;
-  };
+  const diasVacios: DiaCalendario[] = [];
 
-  const formatDateShort = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
-  };
+  for (let i = 0; i < 7; i++) {
+    const fecha = new Date(inicioSemana);
+    fecha.setDate(inicioSemana.getDate() + i);
+
+    diasVacios.push({
+      fecha: fecha.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+      dia_semana: nombresDias[i],
+      denuncias: []
+    });
+  }
+
+  return diasVacios;
+};
+const cambiarSemana = (direccion: 'anterior' | 'siguiente') => {
+  const nuevaSemana = new Date(currentWeek);
+  if (direccion === 'anterior') {
+    nuevaSemana.setDate(nuevaSemana.getDate() - 7);
+  } else {
+    nuevaSemana.setDate(nuevaSemana.getDate() + 7);
+  }
+  setCurrentWeek(nuevaSemana);
+};
 
   useEffect(() => {
     fetchData();
   }, [currentWeek]);
-
+  const diasParaMostrar = diasCalendario.length > 0 ? diasCalendario : inicializarDiasVacios(currentWeek);
   if (loading) {
     return (
       <Box sx={{ minHeight: '100vh', bgcolor: 'hsl(var(--background))', py: 4 }}>
@@ -204,6 +251,7 @@ const WeeklyCalendar = () => {
               variant="outlined" 
               size="small"
               startIcon={<ChevronLeft style={{ width: 16, height: 16 }} />}
+              onClick={() => cambiarSemana('anterior')}
               sx={{
                 borderColor: 'hsl(var(--border))',
                 color: 'hsl(var(--foreground))',
@@ -229,6 +277,7 @@ const WeeklyCalendar = () => {
               variant="outlined" 
               size="small"
               endIcon={<ChevronRight style={{ width: 16, height: 16 }} />}
+              onClick={() => cambiarSemana('siguiente')}
               sx={{
                 borderColor: 'hsl(var(--border))',
                 color: 'hsl(var(--foreground))',
@@ -335,7 +384,7 @@ const WeeklyCalendar = () => {
           gap: 2,
           mb: 4
         }}>
-          {diasCalendario.map((dia, index) => (
+          {diasParaMostrar.map((dia, index) => (
             <Card 
               key={index} 
               sx={{ 

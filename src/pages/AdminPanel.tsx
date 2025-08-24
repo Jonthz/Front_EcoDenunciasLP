@@ -448,16 +448,16 @@ const AdminPanel = () => {
                           {historial.map((entry, index) => (
                             <Box key={index} sx={{ borderLeft: '2px solid hsl(var(--primary) / 0.2)', pl: 1.5, '& > *': { mb: 0.5 } }}>
                               <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                <StatusBadge status={entry.estado as any} />
+                                <StatusBadge status={entry.estado_nuevo as any} />
                                 <Typography variant="caption" sx={{ color: 'hsl(var(--muted-foreground))' }}>
-                                  {new Date(entry.fecha).toLocaleDateString('es-ES')}
+                                  {new Date(entry.fecha_cambio).toLocaleDateString('es-ES')}
                                 </Typography>
                               </Box>
                               
                               <Box sx={{ fontSize: '0.875rem', '& > *': { mb: 0.5 } }}>
                                 <Box sx={{ color: 'hsl(var(--muted-foreground))', display: 'flex', alignItems: 'center', gap: 0.5 }}>
                                   <User style={{ width: 12, height: 12 }} />
-                                  <span>Por: <Box component="span" sx={{ fontWeight: 500 }}>{entry.usuario}</Box></span>
+                                  <span>Por: <Box component="span" sx={{ fontWeight: 500 }}>{entry.usuario_responsable}</Box></span>
                                 </Box>
                                 
                                 {entry.notas && (
