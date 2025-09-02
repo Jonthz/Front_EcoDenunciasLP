@@ -79,7 +79,7 @@ const organizarPorDias = (denuncias: DenunciaResumen[], fechaReferencia: Date) =
     const fecha = new Date(inicioSemana);
     fecha.setDate(inicioSemana.getDate() + i);
     
-    const fechaStr = fecha.toISOString().split('T')[0]; // Formato YYYY-MM-DD
+    const fechaStr = fecha.toLocaleDateString('sv-SE'); // Formato YYYY-MM-DD
     console.log(`📅 Procesando día ${i}: ${nombresDias[i]} - ${fecha.toLocaleDateString('es-ES')} (ISO: ${fechaStr})`);
     
     // Filtrar denuncias que correspondan a este día
@@ -95,7 +95,7 @@ const organizarPorDias = (denuncias: DenunciaResumen[], fechaReferencia: Date) =
         // Validar que los valores sean números válidos
         if (!isNaN(dia) && !isNaN(mes) && !isNaN(año)) {
           const fechaDenuncia = new Date(año, mes, dia);
-          const fechaDenunciaStr = fechaDenuncia.toISOString().split('T')[0];
+          const fechaDenunciaStr = fechaDenuncia.toLocaleDateString('sv-SE');
           
           console.log(`   🔍 Comparando denuncia #${denuncia.id}: ${denuncia.fecha} -> ${fechaDenunciaStr} === ${fechaStr}`, fechaDenunciaStr === fechaStr);
           
