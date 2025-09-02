@@ -96,6 +96,16 @@ const Reports = () => {
           a.click();
           document.body.removeChild(a);
           URL.revokeObjectURL(url);
+        }  else if (formato === 'csv' && response.file) {
+          // Download CSV
+          const url = URL.createObjectURL(response.file);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `reporte-general-${new Date().toISOString().split('T')[0]}.csv`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
         }
         
         toast({
