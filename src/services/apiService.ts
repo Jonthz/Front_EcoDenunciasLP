@@ -202,7 +202,6 @@ export const crearComentario = async (payload: {
   comentario: string;
 }): Promise<ApiResponse> => {
   
-
   return apiCall('/comentarios', {
     method: 'POST',
     body: JSON.stringify(payload),
@@ -215,7 +214,6 @@ export const fetchComentarios = async (
   limite: number = 20
 ): Promise<ApiResponse<ComentariosResponse>> => {
   
-
   return apiCall<ComentariosResponse>(`/comentarios/${denunciaId}?pagina=${pagina}&limite=${limite}`);
 };
 
@@ -236,7 +234,7 @@ export const actualizarEstado = async (
 };
 
 export const fetchHistorial = async (id: number): Promise<ApiResponse<{ denuncia_id: number; historial: HistorialEstado[] }>> => {
-  
+ 
 
   return apiCall(`/denuncias/${id}/historial`);
 };
@@ -260,8 +258,7 @@ export const fetchReporteCategorias = async (params: {
   fecha_fin?: string;
   limite?: number;
 } = {}): Promise<ApiResponse<ReporteCategorias>> => {
-
-
+  
   const searchParams = new URLSearchParams();
   if (params.fecha_inicio) searchParams.append('fecha_inicio', params.fecha_inicio);
   if (params.fecha_fin) searchParams.append('fecha_fin', params.fecha_fin);
@@ -276,8 +273,7 @@ export const fetchReporteUbicaciones = async (params: {
   fecha_fin?: string;
   limite?: number;
 } = {}): Promise<ApiResponse<ReporteUbicaciones>> => {
-
-
+ 
   const searchParams = new URLSearchParams();
   if (params.fecha_inicio) searchParams.append('fecha_inicio', params.fecha_inicio);
   if (params.fecha_fin) searchParams.append('fecha_fin', params.fecha_fin);
@@ -293,6 +289,8 @@ export const exportarReporte = async (params: {
   fecha_inicio?: string;
   fecha_fin?: string;
 }): Promise<ApiResponse> => {
+
+
   const searchParams = new URLSearchParams();
   searchParams.append('formato', params.formato);
   searchParams.append('tipo', params.tipo);
@@ -341,7 +339,8 @@ export const crearDenuncia = async (payload: {
   email_reportante?: string;
   telefono_reportante?: string;
 }): Promise<ApiResponse> => {
-  
+
+
   // If there's an image, use FormData
   if (payload.imagen) {
     const formData = new FormData();
@@ -368,7 +367,6 @@ export const crearDenuncia = async (payload: {
 
 export const fetchDenuncia = async (id: number): Promise<ApiResponse<DenunciaDetalle>> => {
 
-
   return apiCall<DenunciaDetalle>(`/denuncias/${id}`);
 };
 
@@ -379,7 +377,7 @@ export const checkHealth = async (): Promise<ApiResponse> => {
 };
 
 export const fetchApiDocs = async (): Promise<ApiResponse> => {
-
+  
   return apiCall('/docs');
 };
 
