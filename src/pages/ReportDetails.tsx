@@ -376,7 +376,7 @@ const ReportDetails = () => {
                   }}>
                     <Box
                       component="img"
-                      src={denuncia.imagen_url}
+                       src={`http://localhost/EcoDenunciasLP/${denuncia.imagen_url}`}
                       alt="Evidencia de la denuncia"
                       sx={{
                         maxWidth: 384,
